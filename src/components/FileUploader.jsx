@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import JSZip from 'jszip';
+import { performDeepAnalysis } from '../utils/deepCodeAnalyzer';
 import './FileUploader.css';
 
 const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
@@ -116,13 +117,39 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
         // Simulate analysis process
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Read and analyze files
-        const analyzedFiles = await Promise.all(
-            uploadedFiles.map(async (file) => {
-                const content = await file.text();
-                return analyzeFileContent(file.name, content, file.type);
-            })
+        // Read all files first for cross-file analysis
+        const filesWithContent = await Promise.all(
+            uploadedFiles.map(async (file) => ({
+                fileName: file.name,
+                content: await file.text(),
+                type: file.type
+            }))
         );
+
+        // Perform deep analysis on each file
+        const analyzedFiles = filesWithContent.map(file => {
+            // Basic analysis (existing)
+            const basicAnalysis = analyzeFileContent(file.fileName, file.content, file.type);
+
+            // Deep analysis (new advanced features)
+            const deepAnalysis = performDeepAnalysis(file.content, file.fileName, filesWithContent);
+
+            // Merge both analyses
+            return {
+                ...basicAnalysis,
+                deepAnalysis: {
+                    patterns: deepAnalysis.patterns,
+                    antiPatterns: deepAnalysis.antiPatterns,
+                    syntaxErrors: deepAnalysis.syntaxErrors,
+                    semanticWarnings: deepAnalysis.semanticWarnings,
+                    runtimeErrors: deepAnalysis.runtimeErrors,
+                    performanceWarnings: deepAnalysis.performanceWarnings,
+                    securityVulnerabilities: deepAnalysis.securityVulnerabilities,
+                    dependencies: deepAnalysis.dependencies,
+                    deepScore: deepAnalysis.overallScore
+                }
+            };
+        });
 
         const analysis = {
             totalFiles: analyzedFiles.length,

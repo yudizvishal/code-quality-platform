@@ -4,6 +4,7 @@ import CodeImprovement from './CodeImprovement';
 import W3CValidation from './W3CValidation';
 import PageSpeedReport from './PageSpeedReport';
 import CircularProgress from './CircularProgress';
+import DeepAnalysisReport from './DeepAnalysisReport';
 import { generateW3CReport } from '../utils/w3cValidator';
 
 const AnalysisResults = ({ data, onReset }) => {
@@ -11,6 +12,7 @@ const AnalysisResults = ({ data, onReset }) => {
     const [improvingFile, setImprovingFile] = useState(null);
     const [w3cValidationResult, setW3cValidationResult] = useState(null);
     const [speedReportFile, setSpeedReportFile] = useState(null);
+    const [deepAnalysisFile, setDeepAnalysisFile] = useState(null);
     const [expandedSections, setExpandedSections] = useState({
         errors: true,
         warnings: true,
@@ -261,6 +263,38 @@ const AnalysisResults = ({ data, onReset }) => {
                                         </div>
                                     )}
 
+                                    {/* Deep Analysis Button */}
+                                    {file.deepAnalysis && (
+                                        <div className="deep-analysis-section" style={{ marginBottom: '16px' }}>
+                                            <button
+                                                className="btn btn-primary btn-deep-analysis"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDeepAnalysisFile(file);
+                                                }}
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                                                    border: 'none'
+                                                }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round" />
+                                                </svg>
+                                                View Deep Code Analysis
+                                                <span className="badge" style={{ marginLeft: '8px', background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                                    Score: {file.deepAnalysis.deepScore}/100
+                                                </span>
+                                            </button>
+                                            <p className="improve-hint">
+                                                🔍 Advanced pattern recognition, security analysis, and dependency tracking
+                                            </p>
+                                        </div>
+                                    )}
+
                                     {/* Auto-Improve Button */}
                                     {file.suggestions.some(s => s.autoFix) && (
                                         <div className="auto-improve-section">
@@ -434,6 +468,14 @@ const AnalysisResults = ({ data, onReset }) => {
                 <PageSpeedReport
                     file={speedReportFile}
                     onClose={() => setSpeedReportFile(null)}
+                />
+            )}
+
+            {/* Deep Analysis Report Modal */}
+            {deepAnalysisFile && deepAnalysisFile.deepAnalysis && (
+                <DeepAnalysisReport
+                    deepAnalysis={deepAnalysisFile.deepAnalysis}
+                    onClose={() => setDeepAnalysisFile(null)}
                 />
             )}
         </div>
