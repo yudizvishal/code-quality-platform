@@ -327,11 +327,7 @@
     transition: all var(--transition);
 }
 
-.subsection-title:hover {
-    border-color: var(--neon-purple);
-    background: var(--bg-card-hover);
-    box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
-}
+/* Hover effect removed for static display */
 
 .expand-icon {
     transition: transform var(--transition);
@@ -536,46 +532,35 @@
     transition: all var(--transition);
 }
 
-.recommendation-item:hover {
-    transform: translateX(8px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
+/* Hover effect removed for static display */
 
 .recommendation-item.success {
     border-left-color: var(--success);
     background: rgba(74, 222, 128, 0.05);
 }
 
-.recommendation-item.success:hover {
-    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.2);
-}
+/* Hover effect removed for static display */
 
 .recommendation-item.error {
     border-left-color: var(--error);
     background: rgba(248, 113, 113, 0.05);
 }
 
-.recommendation-item.error:hover {
-    box-shadow: 0 4px 16px rgba(248, 113, 113, 0.2);
-}
+/* Hover effect removed for static display */
 
 .recommendation-item.warning {
     border-left-color: var(--warning);
     background: rgba(250, 204, 21, 0.05);
 }
 
-.recommendation-item.warning:hover {
-    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.2);
-}
+/* Hover effect removed for static display */
 
 .recommendation-item.info {
     border-left-color: var(--info);
     background: rgba(106, 227, 255, 0.05);
 }
 
-.recommendation-item.info:hover {
-    box-shadow: 0 4px 16px rgba(106, 227, 255, 0.2);
-}
+/* Hover effect removed for static display */
 
 .rec-icon {
     font-size: 2.5rem;
@@ -609,12 +594,7 @@
     animation: fadeIn 0.3s ease-out;
 }
 
-.auto-improve-section:hover,
-.w3c-validator-section:hover,
-.speed-analysis-section:hover {
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 20px rgba(106, 227, 255, 0.2);
-}
+/* Hover effects removed for static display */
 
 .btn-improve,
 .btn-w3c,
@@ -633,15 +613,9 @@
     box-shadow: 0 4px 16px rgba(106, 227, 255, 0.3);
 }
 
-.btn-improve:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(106, 227, 255, 0.5);
-}
+/* Hover effect removed for static display */
 
-.btn-w3c:hover,
-.btn-speed:hover {
-    transform: translateY(-2px);
-}
+/* Hover effects removed for static display */
 
 .improve-hint {
     font-size: 0.875rem;
