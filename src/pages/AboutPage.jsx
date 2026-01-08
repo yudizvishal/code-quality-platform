@@ -24,7 +24,19 @@ const AboutPage = () => {
                         </p>
                     </div>
                     <div className="mission-visual">
-                        <div className="visual-circle">🚀</div>
+                        <div className="code-window">
+                            <div className="window-header">
+                                <span className="dot red"></span>
+                                <span className="dot yellow"></span>
+                                <span className="dot green"></span>
+                            </div>
+                            <div className="code-content">
+                                <div className="line line-1"></div>
+                                <div className="line line-2"></div>
+                                <div className="line line-3"></div>
+                                <div className="line line-4"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -54,36 +66,11 @@ const AboutPage = () => {
                                 Passionate about building tools that make developer lives easier.
                                 Expert in React, AI integration, and performant web applications.
                             </p>
-                            <div className="member-socials">
-                                <a href="#" className="social-link" onClick={e => e.preventDefault()}>GitHub</a>
-                                <a href="#" className="social-link" onClick={e => e.preventDefault()}>LinkedIn</a>
-                                <a href="#" className="social-link" onClick={e => e.preventDefault()}>Twitter</a>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="tech-stack glass-card">
-                    <h2>Powered By</h2>
-                    <div className="tech-grid">
-                        <div className="tech-item">
-                            <span className="tech-icon">⚛️</span>
-                            <span>React</span>
-                        </div>
-                        <div className="tech-item">
-                            <span className="tech-icon">⚡</span>
-                            <span>Vite</span>
-                        </div>
-                        <div className="tech-item">
-                            <span className="tech-icon">🤖</span>
-                            <span>Gemini AI</span>
-                        </div>
-                        <div className="tech-item">
-                            <span className="tech-icon">📦</span>
-                            <span>JSZip</span>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     );

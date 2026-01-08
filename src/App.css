@@ -1,28 +1,34 @@
 .app {
   min-height: 100vh;
-  padding-bottom: var(--spacing-xl);
+  padding-top: 100px;
+  /* padding-left removed for full width/centered layout */
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  width: 100%;
 }
 
 /* Hero Section */
 .hero-section {
-  text-align: center;
   padding: var(--spacing-xl) 0;
   margin-bottom: var(--spacing-xl);
+  animation: fadeIn 0.8s ease-out;
 }
 
 .hero-glass-container {
-  background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-pink) 100%);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 4rem 3rem;
-  margin: 0 auto 3rem;
-  max-width: 900px;
-  box-shadow: 0 20px 60px rgba(168, 85, 247, 0.4);
+  padding: 5rem 4rem;
+  /* More spacious padding */
+  margin: 0 auto 4rem;
+  max-width: 1000px;
+  box-shadow: var(--glass-shadow);
   position: relative;
   overflow: hidden;
   animation: scaleIn 0.6s ease-out;
@@ -35,7 +41,7 @@
   right: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(106, 227, 255, 0.1) 0%, transparent 70%);
   animation: rotate 20s linear infinite;
 }
 
@@ -50,58 +56,71 @@
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 4rem;
+  /* Larger title */
   font-weight: 900;
   margin-bottom: var(--spacing-md);
-  line-height: 1.1;
+  line-height: 1.2;
   letter-spacing: -0.02em;
-  color: var(--text-white);
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   position: relative;
   z-index: 1;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: fadeIn 0.8s ease-out 0.2s both;
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 700px;
+  color: var(--text-secondary);
+  max-width: 800px;
   margin: 0 auto var(--spacing-lg);
   line-height: 1.6;
   position: relative;
   z-index: 1;
+  text-align: center;
+  animation: fadeIn 0.8s ease-out 0.4s both;
 }
 
 .hero-btn {
   margin-top: var(--spacing-sm);
   position: relative;
   z-index: 1;
-  background: var(--text-white);
-  color: var(--color-purple);
-  font-weight: 700;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.8s ease-out 0.6s both;
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  /* Ensures centered with auto margins */
 }
 
 .hero-btn:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 /* Features Grid */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(4, 1fr);
+  /* Forces 4 columns on one line */
+  gap: 2rem;
   margin-bottom: var(--spacing-xl);
 }
 
 .feature-card {
-  padding: 2.5rem 2rem;
+  padding: 3rem 2.5rem;
   text-align: center;
   border-radius: var(--radius-lg);
   transition: all var(--transition);
   position: relative;
   overflow: hidden;
-  border: none;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
 .feature-card::before {
@@ -111,58 +130,63 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: inherit;
+  background: var(--gradient-primary);
   opacity: 0;
   transition: opacity var(--transition);
+  z-index: 0;
 }
 
 .feature-card:hover::before {
-  opacity: 0.8;
+  opacity: 0.1;
 }
 
 .feature-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-8px);
+  border-color: var(--neon-blue);
+  box-shadow:
+    var(--glass-shadow),
+    0 0 30px rgba(106, 227, 255, 0.3);
 }
 
-/* Individual card colors - VIBRANT! */
+/* Individual card colors - Neon Glow! */
 .feature-card:nth-child(1) {
-  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
-  box-shadow: 0 12px 32px rgba(168, 85, 247, 0.4);
   animation: fadeIn 0.5s ease-out 0.1s both;
 }
 
 .feature-card:nth-child(1):hover {
-  box-shadow: 0 16px 48px rgba(168, 85, 247, 0.6);
+  box-shadow:
+    var(--glass-shadow),
+    0 0 30px rgba(106, 227, 255, 0.4);
 }
 
 .feature-card:nth-child(2) {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  box-shadow: 0 12px 32px rgba(6, 182, 212, 0.4);
   animation: fadeIn 0.5s ease-out 0.2s both;
 }
 
 .feature-card:nth-child(2):hover {
-  box-shadow: 0 16px 48px rgba(6, 182, 212, 0.6);
+  box-shadow:
+    var(--glass-shadow),
+    0 0 30px rgba(167, 139, 250, 0.4);
 }
 
 .feature-card:nth-child(3) {
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  box-shadow: 0 12px 32px rgba(249, 115, 22, 0.4);
   animation: fadeIn 0.5s ease-out 0.3s both;
 }
 
 .feature-card:nth-child(3):hover {
-  box-shadow: 0 16px 48px rgba(249, 115, 22, 0.6);
+  box-shadow:
+    var(--glass-shadow),
+    0 0 30px rgba(74, 222, 128, 0.4);
 }
 
 .feature-card:nth-child(4) {
-  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
-  box-shadow: 0 12px 32px rgba(236, 72, 153, 0.4);
   animation: fadeIn 0.5s ease-out 0.4s both;
 }
 
 .feature-card:nth-child(4):hover {
-  box-shadow: 0 16px 48px rgba(236, 72, 153, 0.6);
+  box-shadow:
+    var(--glass-shadow),
+    0 0 30px rgba(250, 204, 21, 0.4);
 }
 
 .feature-icon {
@@ -173,12 +197,33 @@
   justify-content: center;
   width: 100px;
   height: 100px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--glass-bg);
   border-radius: var(--radius-lg);
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--glass-border);
   animation: float 3s ease-in-out infinite;
   position: relative;
   z-index: 1;
+  transition: all var(--transition);
+}
+
+.feature-card:hover .feature-icon {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 20px rgba(106, 227, 255, 0.3);
+}
+
+.feature-card:nth-child(2):hover .feature-icon {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+}
+
+.feature-card:nth-child(3):hover .feature-icon {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+}
+
+.feature-card:nth-child(4):hover .feature-icon {
+  border-color: var(--warning);
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
 }
 
 .feature-card:nth-child(2) .feature-icon {
@@ -197,13 +242,13 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: var(--spacing-sm);
-  color: var(--text-white);
+  color: var(--text-primary);
   position: relative;
   z-index: 1;
 }
 
 .feature-card p {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   font-size: 1rem;
   line-height: 1.6;
   position: relative;
@@ -212,6 +257,11 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .app {
+    padding-left: 0;
+    padding-top: 80px;
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -227,5 +277,9 @@
 
   .hero-glass-container {
     padding: 3rem 2rem;
+  }
+
+  .container {
+    padding: var(--spacing-md);
   }
 }

@@ -2,12 +2,15 @@ import { useState } from 'react';
 import './AnalysisResults.css';
 import CodeImprovement from './CodeImprovement';
 import W3CValidation from './W3CValidation';
+import PageSpeedReport from './PageSpeedReport';
+import CircularProgress from './CircularProgress';
 import { generateW3CReport } from '../utils/w3cValidator';
 
 const AnalysisResults = ({ data, onReset }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [improvingFile, setImprovingFile] = useState(null);
     const [w3cValidationResult, setW3cValidationResult] = useState(null);
+    const [speedReportFile, setSpeedReportFile] = useState(null);
     const [expandedSections, setExpandedSections] = useState({
         errors: true,
         warnings: true,
@@ -78,9 +81,16 @@ const AnalysisResults = ({ data, onReset }) => {
 
                     <div className="stat-card">
                         <div className="stat-icon score-icon">
-                            <div className={`score-circle score-${getScoreColor(data.summary.averageQualityScore)}`}>
-                                {data.summary.averageQualityScore}%
-                            </div>
+                            <CircularProgress
+                                value={data.summary.averageQualityScore}
+                                max={100}
+                                size={80}
+                                strokeWidth={6}
+                                color={
+                                    data.summary.averageQualityScore >= 80 ? 'success' :
+                                        data.summary.averageQualityScore >= 60 ? 'warning' : 'error'
+                                }
+                            />
                         </div>
                         <div className="stat-info">
                             <div className="stat-value">{data.summary.averageQualityScore}/100</div>
@@ -139,7 +149,7 @@ const AnalysisResults = ({ data, onReset }) => {
                     {data.files.map((file, index) => (
                         <div
                             key={index}
-                            className={`file-analysis-card ${selectedFile === index ? 'selected' : ''}`}
+                            className={`file-analysis-card quality-${getScoreColor(file.qualityScore)} ${selectedFile === index ? 'selected' : ''}`}
                             onClick={() => setSelectedFile(selectedFile === index ? null : index)}
                         >
                             <div className="file-card-header">
@@ -299,6 +309,31 @@ const AnalysisResults = ({ data, onReset }) => {
                                         </div>
                                     )}
 
+                                    {/* Page Speed Analysis Button */}
+                                    {(file.fileName.endsWith('.html') || file.fileName.endsWith('.jsx') || file.fileName.endsWith('.tsx')) && (
+                                        <div className="speed-analysis-section" style={{ marginTop: '16px' }}>
+                                            <button
+                                                className="btn btn-secondary btn-speed"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSpeedReportFile(file);
+                                                }}
+                                                style={{ background: 'linear-gradient(135deg, #1e90ff 0%, #00bfff 100%)', border: 'none' }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                                Check Page Speed (GTmetrix Style)
+                                                <span className="badge" style={{ marginLeft: '8px', background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                                    Mobile & Web
+                                                </span>
+                                            </button>
+                                            <p className="improve-hint">
+                                                🚀 Generate a performance report with Mobile/Desktop scores and optimization tips
+                                            </p>
+                                        </div>
+                                    )}
+
                                     {file.issues.length === 0 && file.suggestions.length === 0 && (
                                         <div className="no-issues">
                                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -391,6 +426,14 @@ const AnalysisResults = ({ data, onReset }) => {
                 <W3CValidation
                     validationResult={w3cValidationResult}
                     onClose={() => setW3cValidationResult(null)}
+                />
+            )}
+
+            {/* Page Speed Report Modal */}
+            {speedReportFile && (
+                <PageSpeedReport
+                    file={speedReportFile}
+                    onClose={() => setSpeedReportFile(null)}
                 />
             )}
         </div>

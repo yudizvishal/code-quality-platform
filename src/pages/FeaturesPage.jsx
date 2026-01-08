@@ -73,6 +73,30 @@ const FeaturesPage = ({ onStartAnalysis }) => {
                 'Bulk code quality reports'
             ],
             color: 'blue'
+        },
+        {
+            icon: '✅',
+            title: 'W3C HTML Validation',
+            description: 'Comprehensive HTML validation following W3C standards and best practices.',
+            details: [
+                'DOCTYPE validation',
+                'Semantic HTML structure check',
+                'Accessibility compliance (WCAG)',
+                'Deprecated tag detection'
+            ],
+            color: 'teal'
+        },
+        {
+            icon: '⚡',
+            title: 'GTmetrix Page Speed',
+            description: 'Advanced performance analysis with detailed speed metrics and optimization tips.',
+            details: [
+                'Core Web Vitals (LCP, TBT, CLS)',
+                'Mobile & Desktop scoring',
+                'Render-blocking resource detection',
+                'Performance optimization suggestions'
+            ],
+            color: 'yellow'
         }
     ];
 

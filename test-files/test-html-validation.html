@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W3C Validation Test - All Features</title>
+</head>
+<body>
+    <h1>HTML Validation Test File</h1>
+    
+    <!-- Test 1: Images without alt attributes -->
+    <img src="image1.jpg">
+    <img src="image2.png">
+    
+    <!-- Test 2: Deprecated tags -->
+    <center>
+        <font color="red" size="5">This uses deprecated tags</font>
+    </center>
+    
+    <marquee>This is a deprecated marquee tag</marquee>
+    
+    <!-- Test 3: Invalid nesting -->
+    <p>
+        <div>This div should not be inside a p tag</div>
+    </p>
+    
+    <!-- Test 4: Missing form labels -->
+    <form>
+        <input type="text" name="username">
+        <input type="password" name="password">
+        <button type="submit">Submit</button>
+    </form>
+    
+    <!-- Test 5: Inline styles (should use CSS) -->
+    <div style="color: blue; font-size: 20px; margin: 10px;">
+        Inline styled content
+    </div>
+    
+    <!-- Test 6: Script without defer/async -->
+    <script src="script.js"></script>
+    
+    <!-- Test 7: Multiple accessibility issues -->
+    <button>Click</button>
+    <a href="#">Link without description</a>
+    
+    <!-- Test 8: Performance - render blocking resources -->
+    <link rel="stylesheet" href="styles.css">
+    <script src="blocking-script.js"></script>
+</body>
+</html>
