@@ -126,15 +126,14 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
             }))
         );
 
-        // Perform deep analysis on each file
+        // Perform analysis on each file
         const analyzedFiles = filesWithContent.map(file => {
-            // Basic analysis (existing)
+            // Basic analysis
             const basicAnalysis = analyzeFileContent(file.fileName, file.content, file.type);
 
             // Deep analysis (new advanced features)
             const deepAnalysis = performDeepAnalysis(file.content, file.fileName, filesWithContent);
 
-            // Merge both analyses
             return {
                 ...basicAnalysis,
                 deepAnalysis: {
@@ -624,14 +623,6 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
 
                     <h3>Drag and Drop Your Code or ZIP File Here</h3>
                     <p>Upload individual files or a ZIP containing your entire project. We'll automatically extract and analyze all code files!</p>
-
-                    <button className="btn btn-primary mt-md" onClick={onButtonClick}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 4V20M12 4L8 8M12 4L16 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        Upload File
-                    </button>
-
                     <div className="supported-formats mt-md">
                         <span className="badge badge-info">.js</span>
                         <span className="badge badge-info">.jsx</span>
@@ -641,6 +632,14 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                         <span className="badge badge-info">.html</span>
                         <span className="badge badge-success">.zip</span>
                     </div>
+
+                    <button className="btn btn-primary mt-md" onClick={onButtonClick}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4V20M12 4L8 8M12 4L16 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        Upload File
+                    </button>
+
                 </div>
             )}
 
@@ -710,7 +709,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                             <div className="loader-ring"></div>
                         </div>
                         <h3>Analyzing Your Code...</h3>
-                        <p>Please wait while we perform deep analysis on your files</p>
+                        <p>We are performing deep code analysis on your files</p>
                         <div className="analyzing-steps">
                             <div className="step active">
                                 <span className="step-icon">✓</span>
@@ -718,7 +717,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                             </div>
                             <div className="step active">
                                 <span className="step-icon">⟳</span>
-                                Detecting errors
+                                Deep Analysis
                             </div>
                             <div className="step">
                                 <span className="step-icon">○</span>

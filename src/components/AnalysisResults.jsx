@@ -3,8 +3,8 @@ import './AnalysisResults.css';
 import CodeImprovement from './CodeImprovement';
 import W3CValidation from './W3CValidation';
 import PageSpeedReport from './PageSpeedReport';
-import CircularProgress from './CircularProgress';
 import DeepAnalysisReport from './DeepAnalysisReport';
+import CircularProgress from './CircularProgress';
 import { generateW3CReport } from '../utils/w3cValidator';
 
 const AnalysisResults = ({ data, onReset }) => {
@@ -235,7 +235,7 @@ const AnalysisResults = ({ data, onReset }) => {
                                                                 {suggestion.autoFix && (
                                                                     <span className="auto-fix-badge">
                                                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                            <path d="M14 7H19.6404C20.0877 7 20.3113 7 20.4421 7.09404C20.5562 7.17609 20.6306 7.30239 20.6469 7.442C20.6656 7.602 20.5569 7.79751 20.3397 8.18851L18.9936 10.6115C18.9148 10.7533 18.8755 10.8242 18.86 10.8993C18.8463 10.9668 18.8463 11.0357 18.86 11.1032C18.8755 11.1784 18.9148 11.2492 18.9936 11.391L20.3397 13.814C20.5569 14.205 20.6656 14.4005 20.6469 14.5605C20.6306 14.7001 20.5562 14.8264 20.4421 14.9085C20.3113 15.0025 20.0877 15.0025 19.6404 15.0025H12.6C12.0399 15.0025 11.7599 15.0025 11.546 14.8912C11.3578 14.7942 11.2067 14.6431 11.1097 14.4549C10.9984 14.241 10.9984 13.961 10.9984 13.4009V11M4 21L4 4M4 11H12.4C12.9601 11 13.2401 11 13.454 10.8887C13.6422 10.7917 13.7933 10.6406 13.8903 10.4524C14.0016 10.2385 14.0016 9.95854 14.0016 9.39843V4.59843C14.0016 4.03832 14.0016 3.75827 13.8903 3.54433C13.7933 3.35614 13.6422 3.20502 13.454 3.10803C13.2401 2.99673 12.9601 2.99673 12.4 2.99673H4"
+                                                                            <path d="M14 7H19.6404C20.0877 7 20.3113 7 20.4421 7.09404C20.5562 7.17609 20.6306 7.30239 20.6469 7.442C20.6656 7.602 20.5569 7.79751 20.3397 8.18851L18.9936 10.6115C18.9148 10.7533 18.8755 10.8242 18.86 10.8993C18.8463 10.9668 18.8463 11.0357 18.8755 11.1784 18.9148 11.2492 18.9936 11.391L20.3397 13.814C20.5569 14.205 20.6656 14.4005 20.6469 14.5605C20.6306 14.7001 20.5562 14.8264 20.4421 14.9085C20.3113 15.0025 20.0877 15.0025 19.6404 15.0025H12.6C12.0399 15.0025 11.7599 15.0025 11.546 14.8912C11.3578 14.7942 11.2067 14.6431 11.1097 14.4549C10.9984 14.241 10.9984 13.961 10.9984 13.4009V11M4 21L4 4M4 11H12.4C12.9601 11 13.2401 11 13.454 10.8887C13.6422 10.7917 13.7933 10.6406 13.8903 10.4524C14.0016 10.2385 14.0016 9.95854 14.0016 9.39843V4.59843C14.0016 4.03832 14.0016 3.75827 13.8903 3.54433C13.7933 3.35614 13.6422 3.20502 13.454 3.10803C13.2401 2.99673 12.9601 2.99673 12.4 2.99673H4"
                                                                                 stroke="currentColor"
                                                                                 strokeWidth="2"
                                                                                 strokeLinecap="round"
@@ -260,38 +260,6 @@ const AnalysisResults = ({ data, onReset }) => {
                                                     ))}
                                                 </div>
                                             )}
-                                        </div>
-                                    )}
-
-                                    {/* Deep Analysis Button */}
-                                    {file.deepAnalysis && (
-                                        <div className="deep-analysis-section" style={{ marginBottom: '16px' }}>
-                                            <button
-                                                className="btn btn-primary btn-deep-analysis"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setDeepAnalysisFile(file);
-                                                }}
-                                                style={{
-                                                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                                                    border: 'none'
-                                                }}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round" />
-                                                </svg>
-                                                View Deep Code Analysis
-                                                <span className="badge" style={{ marginLeft: '8px', background: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                                                    Score: {file.deepAnalysis.deepScore}/100
-                                                </span>
-                                            </button>
-                                            <p className="improve-hint">
-                                                🔍 Advanced pattern recognition, security analysis, and dependency tracking
-                                            </p>
                                         </div>
                                     )}
 
@@ -345,7 +313,7 @@ const AnalysisResults = ({ data, onReset }) => {
 
                                     {/* Page Speed Analysis Button */}
                                     {(file.fileName.endsWith('.html') || file.fileName.endsWith('.jsx') || file.fileName.endsWith('.tsx')) && (
-                                        <div className="speed-analysis-section" style={{ marginTop: '16px' }}>
+                                        <div className="speed-analysis-section">
                                             <button
                                                 className="btn btn-secondary btn-speed"
                                                 onClick={(e) => {
@@ -364,6 +332,39 @@ const AnalysisResults = ({ data, onReset }) => {
                                             </button>
                                             <p className="improve-hint">
                                                 🚀 Generate a performance report with Mobile/Desktop scores and optimization tips
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Deep Analysis Button */}
+                                    {file.deepAnalysis && (
+                                        <div className="deep-analysis-section">
+                                            <button
+                                                className="btn btn-primary btn-deep-analysis"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setDeepAnalysisFile(file);
+                                                }}
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                                                    border: 'none',
+                                                    boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)'
+                                                }}
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                                                        stroke="currentColor"
+                                                        strokeWidth="2"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round" />
+                                                </svg>
+                                                View Deep Code Analysis
+                                                <span className="badge" style={{ marginLeft: '8px', background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                                    Score: {file.deepAnalysis.deepScore}/100
+                                                </span>
+                                            </button>
+                                            <p className="improve-hint">
+                                                🔍 Advanced pattern recognition, security analysis, and dependency tracking
                                             </p>
                                         </div>
                                     )}
@@ -472,7 +473,7 @@ const AnalysisResults = ({ data, onReset }) => {
             )}
 
             {/* Deep Analysis Report Modal */}
-            {deepAnalysisFile && deepAnalysisFile.deepAnalysis && (
+            {deepAnalysisFile && (
                 <DeepAnalysisReport
                     deepAnalysis={deepAnalysisFile.deepAnalysis}
                     onClose={() => setDeepAnalysisFile(null)}
