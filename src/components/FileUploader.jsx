@@ -667,7 +667,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                             <div key={index} className="file-item">
                                 <div className="file-info">
                                     <div className="file-icon">📄</div>
-                                    <div className="file-details">
+                                    <div className="file-item-details">
                                         <div className="file-name">{file.name}</div>
                                         <div className="file-size">{(file.size / 1024).toFixed(2)} KB</div>
                                     </div>

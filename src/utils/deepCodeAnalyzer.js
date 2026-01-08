@@ -609,7 +609,17 @@ export const performDeepAnalysis = (content, fileName, allFiles = []) => {
 
     // 4. Cross-file Dependencies (if multiple files provided)
     if (allFiles.length > 1) {
-        results.dependencies = analyzeDependencies(allFiles);
+        const globalDependencies = analyzeDependencies(allFiles);
+
+        // Filter circular dependencies specific to this file
+        const relevantCircular = globalDependencies.circularDependencies.filter(
+            item => item.files.includes(fileName)
+        );
+
+        results.dependencies = {
+            ...globalDependencies,
+            circularDependencies: relevantCircular
+        };
     }
 
     // Calculate overall score

@@ -171,30 +171,35 @@
 .files-list {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: 0.75rem;
     margin-bottom: var(--spacing-lg);
     max-height: 400px;
     overflow-y: auto;
-    padding-right: var(--spacing-xs);
+    padding: 0.5rem;
+    /* Ensure spacing inside list */
 }
 
 .file-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
-    background: var(--glass-bg);
+    padding: 1rem 1.25rem;
+    /* Proper four-side spacing */
+    background: rgba(255, 255, 255, 0.03);
+    /* Much cleaner, subtle background */
     backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
+    border: none;
+    /* Removed border completely */
+    box-shadow: none;
+    /* Ensure no shadows appearing as borders */
     border-radius: var(--radius-md);
     transition: all var(--transition);
 }
 
 .file-item:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--neon-purple);
-    transform: translateX(8px);
-    box-shadow: 0 4px 16px rgba(167, 139, 250, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .file-info {
@@ -205,19 +210,21 @@
 }
 
 .file-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
-.file-details {
+.file-item-details {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
 }
 
 .file-name {
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-primary);
-    font-size: 1rem;
+    font-size: 0.95rem;
+    border: none;
+    text-decoration: none;
 }
 
 .file-size {
@@ -280,7 +287,7 @@
     width: 100%;
     height: 100%;
     border: 5px solid transparent;
-    border-radius: 50%);
+    border-radius: 50%;
     animation: spin 1.5s linear infinite;
 }
 
