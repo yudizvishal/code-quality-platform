@@ -123,7 +123,7 @@ const PageSpeedReport = ({ file, onClose }) => {
                 <div className="speed-header">
                     <h3>
                         <span className="gt-badge">SPEED REPORT</span>
-                        Performance Analysis: {file.fileName}
+                        Performance Analysis
                     </h3>
                     <div className="header-actions">
                         <button className="btn-download-pdf-sm" onClick={handlePrint} title="Download Full PDF">
