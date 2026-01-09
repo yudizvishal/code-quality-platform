@@ -11,7 +11,7 @@ const AnalysisResults = ({ data, onReset }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [improvingFile, setImprovingFile] = useState(null);
     const [w3cValidationResult, setW3cValidationResult] = useState(null);
-    const [speedReportFile, setSpeedReportFile] = useState(null);
+    const [speedReportFiles, setSpeedReportFiles] = useState(null);
     const [deepAnalysisFile, setDeepAnalysisFile] = useState(null);
     const [expandedSections, setExpandedSections] = useState({
         errors: true,
@@ -327,7 +327,7 @@ const AnalysisResults = ({ data, onReset }) => {
                                                     className="btn btn-secondary btn-sm"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setSpeedReportFile(file);
+                                                        setSpeedReportFiles([file]);
                                                     }}
                                                 >
                                                     Analyze Speed
@@ -398,6 +398,21 @@ const AnalysisResults = ({ data, onReset }) => {
                     )}
 
                     <div className="recommendation-item info">
+                        <div className="rec-icon">🚀</div>
+                        <div className="rec-content">
+                            <h4>Project Speed Audit</h4>
+                            <p>Run a combined performance analysis for all {data.totalFiles} files in your project.</p>
+                            <button
+                                className="btn btn-secondary btn-sm"
+                                style={{ marginTop: '8px' }}
+                                onClick={() => setSpeedReportFiles(data.files)}
+                            >
+                                Run Project Audit
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="recommendation-item info">
                         <div className="rec-icon">💡</div>
                         <div className="rec-content">
                             <h4>Code Optimization</h4>
@@ -432,10 +447,10 @@ const AnalysisResults = ({ data, onReset }) => {
             )}
 
             {/* Page Speed Report Modal */}
-            {speedReportFile && (
+            {speedReportFiles && (
                 <PageSpeedReport
-                    file={speedReportFile}
-                    onClose={() => setSpeedReportFile(null)}
+                    files={speedReportFiles}
+                    onClose={() => setSpeedReportFiles(null)}
                 />
             )}
 

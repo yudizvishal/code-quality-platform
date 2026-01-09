@@ -555,6 +555,80 @@
 }
 
 
+/* Multi-file Report Styling */
+.file-report-section {
+    margin-top: 30px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-surface-soft);
+    overflow: hidden;
+}
+
+.file-report-header {
+    padding: 15px 20px;
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-report-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.file-report-scores-mini {
+    display: flex;
+    gap: 12px;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+.file-issues-group {
+    margin-bottom: 40px;
+}
+
+.file-issue-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--glass-border);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Print Overrides for Multi-file */
+@media print {
+    .file-report-section {
+        background: #fdfdfd !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 40px !important;
+        page-break-inside: avoid;
+    }
+
+    .file-report-header {
+        background: #eee !important;
+        border-bottom: 2px solid #ccc !important;
+    }
+
+    .file-report-header h5 {
+        color: black !important;
+    }
+
+    .file-issues-group {
+        page-break-before: auto;
+    }
+
+    .file-issue-title {
+        color: black !important;
+        border-bottom: 2px solid #333 !important;
+    }
+}
+
 @media (max-width: 768px) {
 
     .scores-container,
