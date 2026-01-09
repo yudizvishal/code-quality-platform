@@ -401,7 +401,7 @@
     animation: pulse 2s ease-in-out infinite;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .upload-area {
         padding: 3rem 2rem;
     }
@@ -418,6 +418,10 @@
     }
 
     .upload-area h3 {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
+    }
+
+    .supported-formats {
+        font-size: 0.9rem;
     }
 }
