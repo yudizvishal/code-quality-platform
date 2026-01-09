@@ -59,17 +59,27 @@ const AnalysisResults = ({ data, onReset }) => {
                         </svg>
                         Analysis Complete
                     </h2>
-                    <button className="btn btn-secondary" onClick={onReset}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4 12C4 7.58172 7.58172 4 12 4C14.5264 4 16.7792 5.17108 18.2454 7M20 12C20 16.4183 16.4183 20 12 20C9.47362 20 7.22082 18.8289 5.75463 17"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round" />
-                            <path d="M16 7H20V3M8 17H4V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        Analyze New Files
-                    </button>
+                    <div className="summary-actions" style={{ display: 'flex', gap: '12px' }}>
+                        <button className="btn btn-primary" onClick={() => window.print()}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <polyline points="7 10 12 15 17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            Export PDF Report
+                        </button>
+                        <button className="btn btn-secondary" onClick={onReset}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 12C4 7.58172 7.58172 4 12 4C14.5264 4 16.7792 5.17108 18.2454 7M20 12C20 16.4183 16.4183 20 12 20C9.47362 20 7.22082 18.8289 5.75463 17"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round" />
+                                <path d="M16 7H20V3M8 17H4V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            Analyze New Files
+                        </button>
+                    </div>
                 </div>
 
                 <div className="summary-stats">
@@ -263,111 +273,68 @@ const AnalysisResults = ({ data, onReset }) => {
                                         </div>
                                     )}
 
-                                    {/* Auto-Improve Button */}
-                                    {file.suggestions.some(s => s.autoFix) && (
-                                        <div className="auto-improve-section">
-                                            <button
-                                                className="btn btn-primary btn-improve"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setImprovingFile(file);
-                                                }}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                                Auto-Improve This Code
-                                                <span className="badge badge-success" style={{ marginLeft: '8px' }}>
-                                                    {file.suggestions.filter(s => s.autoFix).length} fixes available
-                                                </span>
-                                            </button>
-                                            <p className="improve-hint">
-                                                ✨ Click to automatically apply suggested improvements and download the improved code
-                                            </p>
-                                        </div>
-                                    )}
+                                    {/* Action Buttons Grid */}
+                                    <div className="file-actions-grid">
+                                        {/* Auto-Improve Button */}
+                                        {file.suggestions.some(s => s.autoFix) && (
+                                            <div className="action-card auto-improve-card">
+                                                <div className="action-card-header">
+                                                    <span className="action-icon">✨</span>
+                                                    <h4>Auto-Improve</h4>
+                                                </div>
+                                                <p>Apply {file.suggestions.filter(s => s.autoFix).length} fixes automatically</p>
+                                                <button
+                                                    className="btn btn-primary btn-sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setImprovingFile(file);
+                                                    }}
+                                                >
+                                                    Start Improving
+                                                </button>
+                                            </div>
+                                        )}
 
-                                    {/* W3C Validator Button for HTML files */}
-                                    {file.fileName.endsWith('.html') && (
-                                        <div className="w3c-validator-section">
-                                            <button
-                                                className="btn btn-secondary btn-w3c"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleW3CValidation(file);
-                                                }}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                                W3C HTML Validator
-                                                <span className="badge badge-info" style={{ marginLeft: '8px' }}>
-                                                    Validate HTML
-                                                </span>
-                                            </button>
-                                            <p className="improve-hint">
-                                                🔍 Validate your HTML against W3C standards
-                                            </p>
-                                        </div>
-                                    )}
+                                        {/* W3C Validator Button */}
+                                        {file.fileName.endsWith('.html') && (
+                                            <div className="action-card w3c-card">
+                                                <div className="action-card-header">
+                                                    <span className="action-icon">✓</span>
+                                                    <h4>W3C Validation</h4>
+                                                </div>
+                                                <p>Validate HTML compliance</p>
+                                                <button
+                                                    className="btn btn-secondary btn-sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleW3CValidation(file);
+                                                    }}
+                                                >
+                                                    Validate Now
+                                                </button>
+                                            </div>
+                                        )}
 
-                                    {/* Page Speed Analysis Button */}
-                                    {(file.fileName.endsWith('.html') || file.fileName.endsWith('.jsx') || file.fileName.endsWith('.tsx')) && (
-                                        <div className="speed-analysis-section">
-                                            <button
-                                                className="btn btn-secondary btn-speed"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSpeedReportFile(file);
-                                                }}
-                                                style={{ background: 'linear-gradient(135deg, #1e90ff 0%, #00bfff 100%)', border: 'none' }}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                                Check Page Speed (GTmetrix Style)
-                                                <span className="badge" style={{ marginLeft: '8px', background: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                                                    Mobile & Web
-                                                </span>
-                                            </button>
-                                            <p className="improve-hint">
-                                                🚀 Generate a performance report with Mobile/Desktop scores and optimization tips
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Deep Analysis Button */}
-                                    {file.deepAnalysis && (
-                                        <div className="deep-analysis-section">
-                                            <button
-                                                className="btn btn-primary btn-deep-analysis"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setDeepAnalysisFile(file);
-                                                }}
-                                                style={{
-                                                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                                                    border: 'none',
-                                                    boxShadow: '0 4px 15px rgba(139, 92, 246, 0.4)'
-                                                }}
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round" />
-                                                </svg>
-                                                View Deep Code Analysis
-                                                <span className="badge" style={{ marginLeft: '8px', background: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                                                    Score: {file.deepAnalysis.deepScore}/100
-                                                </span>
-                                            </button>
-                                            <p className="improve-hint">
-                                                🔍 Advanced pattern recognition, security analysis, and dependency tracking
-                                            </p>
-                                        </div>
-                                    )}
+                                        {/* Page Speed Analysis */}
+                                        {(file.fileName.endsWith('.html') || file.fileName.endsWith('.jsx') || file.fileName.endsWith('.tsx')) && (
+                                            <div className="action-card speed-card">
+                                                <div className="action-card-header">
+                                                    <span className="action-icon">🚀</span>
+                                                    <h4>Page Speed</h4>
+                                                </div>
+                                                <p>Check performance score</p>
+                                                <button
+                                                    className="btn btn-secondary btn-sm"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSpeedReportFile(file);
+                                                    }}
+                                                >
+                                                    Analyze Speed
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
 
                                     {file.issues.length === 0 && file.suggestions.length === 0 && (
                                         <div className="no-issues">

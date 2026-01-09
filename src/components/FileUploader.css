@@ -131,9 +131,23 @@
 
 .supported-formats {
     display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: var(--spacing-lg);
+}
+
+.format-group {
+    display: flex;
     gap: var(--spacing-xs);
     justify-content: center;
     flex-wrap: wrap;
+}
+
+.mt-sm {
+    margin-top: var(--spacing-sm);
 }
 
 /* Files List */

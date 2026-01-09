@@ -32,7 +32,7 @@ describe('Integration Tests', () => {
             });
 
             // Navigate back to Home
-            const codeGuardLinks = screen.getAllByText('CodeGuard');
+            const codeGuardLinks = screen.getAllByText('Quali Code');
             fireEvent.click(codeGuardLinks[0]);
             await waitFor(() => {
                 expect(screen.getByText('Code Quality Platform')).toBeInTheDocument();
@@ -59,7 +59,7 @@ describe('Integration Tests', () => {
             render(<App />);
 
             // Header
-            expect(screen.getByText('CodeGuard')).toBeInTheDocument();
+            expect(screen.getByText('Quali Code')).toBeInTheDocument();
 
             // Navigation
             expect(screen.getByText('Features')).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe('Integration Tests', () => {
             // Navigate away and back
             const featuresLinks = screen.getAllByText('Features');
             fireEvent.click(featuresLinks[0]);
-            fireEvent.click(screen.getByText('CodeGuard'));
+            fireEvent.click(screen.getByText('Quali Code'));
 
             // State should be preserved
             expect(screen.getByText('Code Quality Platform')).toBeInTheDocument();

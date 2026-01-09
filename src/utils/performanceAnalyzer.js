@@ -8,7 +8,7 @@ export const analyzePerformance = (content, fileName) => {
     const issues = [];
     let mobileScore = 98; // Start high, penalize
     let desktopScore = 99; // Start high, penalize
-    
+
     // Helper to add issue
     const addIssue = (impact, title, description) => {
         issues.push({ impact, title, description });
@@ -41,10 +41,10 @@ export const analyzePerformance = (content, fileName) => {
     }
 
     // 4. Check for viewport meta tag
-    if (fileName.endsWith('.html') || fileName.endsWith('.jsx')) {
+    if (fileName && (fileName.endsWith('.html') || fileName.endsWith('.jsx') || fileName.endsWith('.tsx'))) {
         if (!content.includes('<meta name="viewport"')) {
-             addIssue('high', 'Missing viewport meta tag', 'The page is not optimized for mobile devices. Add a viewport meta tag.');
-             mobileScore -= 20; // Heavy penalty for mobile
+            addIssue('high', 'Missing viewport meta tag', 'The page is not optimized for mobile devices. Add a viewport meta tag.');
+            mobileScore -= 20; // Heavy penalty for mobile
         }
     }
 
@@ -53,14 +53,14 @@ export const analyzePerformance = (content, fileName) => {
         addIssue('medium', 'Image elements missing alt attributes', 'Missing alt attributes hurt accessibility and SEO.');
     }
 
-     // 6. Check for too many DOM nodes (rough estimate based on tags)
-     const tagCount = (content.match(/<[a-z]+/gi) || []).length;
-     if (tagCount > 1500) {
-         addIssue('medium', 'Avoid an excessive DOM size', `Found ~${tagCount} DOM elements. Large DOMs increase memory usage and style calculations.`);
-     }
+    // 6. Check for too many DOM nodes (rough estimate based on tags)
+    const tagCount = (content.match(/<[a-z]+/gi) || []).length;
+    if (tagCount > 1500) {
+        addIssue('medium', 'Avoid an excessive DOM size', `Found ~${tagCount} DOM elements. Large DOMs increase memory usage and style calculations.`);
+    }
 
-     // 7. Check for lazy loading images
-     if (content.match(/<img/g) && !content.match(/loading="lazy"/g)) {
+    // 7. Check for lazy loading images
+    if (content.match(/<img/g) && !content.match(/loading="lazy"/g)) {
         addIssue('low', 'Defer offscreen images', 'Consider using loading="lazy" for offscreen images to improve initial load time.');
     }
 

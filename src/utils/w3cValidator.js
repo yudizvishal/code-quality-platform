@@ -277,6 +277,23 @@ export const validateHTML = (htmlCode) => {
         }
     });
 
+    // Check 16: Trailing slash on void elements (Info)
+    const voidPattern = /<(br|hr|img|input|meta|link)[^>]*\s*\/>/gi;
+    let voidMatch;
+    while ((voidMatch = voidPattern.exec(htmlCode)) !== null) {
+        validationResults.suggestions.push({
+            line: getLineNumber(htmlCode, voidMatch[0]),
+            type: 'info',
+            category: 'Info',
+            message: 'Trailing slash on void elements has no effect',
+            suggestion: 'Remove the trailing slash (/) as it has no effect in HTML5 and interacts badly with unquoted attribute values.',
+            fixCode: voidMatch[0].replace('/>', '>'),
+            autoFix: true
+        });
+        // Info messages don't necessarily deduct score, or maybe just a tiny bit
+        validationResults.score -= 0;
+    }
+
     // Ensure score doesn't go below 0
     validationResults.score = Math.max(0, validationResults.score);
 

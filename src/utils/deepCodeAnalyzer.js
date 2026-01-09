@@ -63,6 +63,26 @@ const detectDesignPatterns = (content) => {
         });
     }
 
+    // Python Decorator
+    if (/@\w+[\s\S]*?def\s+\w+/i.test(content)) {
+        patterns.push({
+            type: 'design-pattern',
+            name: 'Decorator Pattern (Python)',
+            confidence: 'high',
+            message: 'Decorator detected - clean separation of concerns'
+        });
+    }
+
+    // Smart Contract (Blockchain)
+    if (/contract\s+\w+\s*{/i.test(content)) {
+        patterns.push({
+            type: 'design-pattern',
+            name: 'Smart Contract Structure',
+            confidence: 'high',
+            message: 'Blockchain Smart Contract architecture detected'
+        });
+    }
+
     return patterns;
 };
 
@@ -128,6 +148,50 @@ const detectAntiPatterns = (content) => {
             severity: 'medium',
             message: `${duplicateBlocks.length} duplicate code blocks found. Extract to reusable functions`,
             line: 1
+        });
+    }
+
+    // Python: Broad Exception
+    if (/except\s*:/.test(content) || /except\s+Exception\s*:/.test(content)) {
+        antiPatterns.push({
+            type: 'anti-pattern',
+            name: 'Broad Exception',
+            severity: 'high',
+            message: 'Catching broad Exception can hide critical errors. Catch specific exceptions instead.',
+            line: findLineNumber(content, 'except')
+        });
+    }
+
+    // PHP: Global Variable Abuse
+    if (/\$GLOBALS\[/.test(content) || /global\s+\$\w+/.test(content)) {
+        antiPatterns.push({
+            type: 'anti-pattern',
+            name: 'Global State Abuse',
+            severity: 'medium',
+            message: 'Overuse of global variables makes code hard to test and maintain.',
+            line: findLineNumber(content, 'global')
+        });
+    }
+
+    // Solidity: Tx.Origin for Auth
+    if (/tx\.origin/.test(content)) {
+        antiPatterns.push({
+            type: 'anti-pattern',
+            name: 'TX.Origin Phishing Risk',
+            severity: 'critical',
+            message: 'Using tx.origin for authentication is vulnerable to phishing attacks. Use msg.sender instead.',
+            line: findLineNumber(content, 'tx.origin')
+        });
+    }
+
+    // Vue: v-html XSS Risk
+    if (/v-html=/.test(content)) {
+        antiPatterns.push({
+            type: 'anti-pattern',
+            name: 'v-html XSS Risk',
+            severity: 'high',
+            message: 'Directly rendering HTML with v-html is dangerous and can lead to XSS. Sanitize input properly.',
+            line: findLineNumber(content, 'v-html')
         });
     }
 

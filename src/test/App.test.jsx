@@ -6,7 +6,7 @@ describe('App Component', () => {
     it('should render the application', () => {
         render(<App />);
 
-        expect(screen.getByText('CodeGuard')).toBeInTheDocument();
+        expect(screen.getByText('Quali Code')).toBeInTheDocument();
         expect(screen.getByText('Code Quality Platform')).toBeInTheDocument();
     });
 
@@ -71,7 +71,7 @@ describe('App Component', () => {
         fireEvent.click(featuresLinks[0]);
 
         // Navigate back to home
-        const logo = screen.getByText('CodeGuard');
+        const logo = screen.getByText('Quali Code');
         fireEvent.click(logo);
 
         // Should show home page content again

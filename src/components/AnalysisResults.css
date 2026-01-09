@@ -8,7 +8,7 @@
 /* Summary Card - Premium Glass! */
 .summary-card {
     padding: var(--spacing-lg);
-    background: rgba(10, 12, 16, 0.7);
+    background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
@@ -175,7 +175,7 @@
 /* Files Analysis */
 .files-analysis {
     padding: var(--spacing-lg);
-    background: rgba(10, 12, 16, 0.7);
+    background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
@@ -204,11 +204,13 @@
 
 .file-analysis-card {
     padding: var(--spacing-md);
-    background: rgba(10, 12, 16, 0.7);
+    background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
-    cursor: pointer;
+    cursor: auto
+        /* Changed from pointer */
+    ;
     border-left: 4px solid var(--glass-border);
 }
 
@@ -237,6 +239,8 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-sm);
+    cursor: pointer;
+    /* Header is clickable */
 }
 
 .file-title {
@@ -354,7 +358,7 @@
 
 .issue-item {
     padding: var(--spacing-sm) var(--spacing-md);
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--bg-surface-soft);
     backdrop-filter: var(--glass-blur);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-md);
@@ -409,7 +413,7 @@
 /* Suggestions */
 .suggestion-item {
     padding: var(--spacing-sm) var(--spacing-md);
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--bg-surface-soft);
     backdrop-filter: var(--glass-blur);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: var(--radius-md);
@@ -580,56 +584,75 @@
     line-height: 1.6;
 }
 
-/* Auto-Improve Section */
-/* Action Sections (Auto-Improve, W3C, Speed, Deep Analysis) */
-.auto-improve-section,
-.w3c-validator-section,
-.speed-analysis-section,
-.deep-analysis-section {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: var(--glass-blur);
-    border: none;
-    border-radius: var(--radius-lg);
-    text-align: center;
+/* New File Actions Grid */
+.file-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
     animation: fadeIn 0.3s ease-out;
+}
+
+.action-card {
+    padding: var(--spacing-lg);
+    background: var(--bg-surface-soft);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-/* Hover effects removed for static display */
-
-.btn-improve,
-.btn-w3c,
-.btn-speed {
-    display: inline-flex;
-    align-items: center;
+    text-align: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-xl);
-    font-size: 1.125rem;
-    font-weight: 700;
-    margin-bottom: var(--spacing-sm);
     transition: all var(--transition);
 }
 
-.btn-improve {
-    box-shadow: 0 4px 16px rgba(106, 227, 255, 0.3);
+/* Neat and clean look - subtle border, no heavy gradients unless active */
+.action-card:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
 }
 
-/* Hover effect removed for static display */
+.action-card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
 
-/* Hover effects removed for static display */
+.action-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
 
-.improve-hint {
+.action-card h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.action-card p {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    font-style: italic;
-    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.4;
+}
+
+.action-card .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.auto-improve-card {
+    border-top: 3px solid var(--neon-purple);
+}
+
+.w3c-card {
+    border-top: 3px solid var(--neon-blue);
+}
+
+.speed-card {
+    border-top: 3px solid var(--warning);
 }
 
 /* Responsive Design */
@@ -652,5 +675,112 @@
 
     .recommendation-item {
         flex-direction: column;
+    }
+
+    .file-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .app-header,
+    .header-actions,
+    .summary-actions,
+    .analysis-results h3 svg,
+    .remove-btn,
+    .close-btn {
+        display: none !important;
+    }
+
+    .analysis-results {
+        padding: 0 !important;
+        background: white !important;
+    }
+
+    .glass-card,
+    .file-analysis-card,
+    .stat-card,
+    .recommendation-item {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        margin-bottom: 20px !important;
+        page-break-inside: avoid;
+    }
+
+    /* Force details to show in print */
+    .file-details {
+        display: block !important;
+        height: auto !important;
+        opacity: 1 !important;
+        padding: 15px !important;
+        border-top: 1px solid #eee !important;
+    }
+
+    .issues-list,
+    .suggestions-list {
+        display: block !important;
+    }
+
+    .subsection-title {
+        color: #333 !important;
+    }
+
+    .expand-icon {
+        display: none !important;
+    }
+
+    .file-actions-grid {
+        display: none !important;
+    }
+
+    .stat-value {
+        color: black !important;
+    }
+
+    .stat-label {
+        color: #666 !important;
+    }
+
+    .quality-badge {
+        background: #eee !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+
+    h2,
+    h3,
+    h4 {
+        color: black !important;
+    }
+
+    p {
+        color: #444 !important;
+    }
+
+    .badge {
+        border: 1px solid #ccc !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Keep color intent but ensure printable */
+    .quality-success {
+        border-left: 5px solid green !important;
+    }
+
+    .quality-warning {
+        border-left: 5px solid orange !important;
+    }
+
+    .quality-error {
+        border-left: 5px solid red !important;
     }
 }

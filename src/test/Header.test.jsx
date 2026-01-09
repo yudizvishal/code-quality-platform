@@ -6,7 +6,7 @@ describe('Header Component', () => {
     it('should render the logo and brand name', () => {
         render(<Header />);
 
-        expect(screen.getByText('CodeGuard')).toBeInTheDocument();
+        expect(screen.getByText('Quali Code')).toBeInTheDocument();
     });
 
     it('should render all navigation links', () => {
@@ -15,7 +15,6 @@ describe('Header Component', () => {
         expect(screen.getByText('Features')).toBeInTheDocument();
         expect(screen.getByText('How it Works')).toBeInTheDocument();
         expect(screen.getByText('About')).toBeInTheDocument();
-        expect(screen.getByText('Get Started')).toBeInTheDocument();
     });
 
     it('should highlight the current page', () => {
@@ -39,21 +38,13 @@ describe('Header Component', () => {
         const mockNavigate = vi.fn();
         render(<Header onNavigate={mockNavigate} />);
 
-        const logo = screen.getByText('CodeGuard');
+        const logo = screen.getByText('Quali Code');
         fireEvent.click(logo);
 
         expect(mockNavigate).toHaveBeenCalledWith('home');
     });
 
-    it('should call onNavigate when clicking Get Started button', () => {
-        const mockNavigate = vi.fn();
-        render(<Header onNavigate={mockNavigate} />);
 
-        const getStartedBtn = screen.getByText('Get Started');
-        fireEvent.click(getStartedBtn);
-
-        expect(mockNavigate).toHaveBeenCalledWith('home');
-    });
 
     it('should prevent default link behavior', () => {
         const mockNavigate = vi.fn();

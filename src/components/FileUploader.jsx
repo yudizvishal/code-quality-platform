@@ -59,7 +59,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
 
                         if (!zipEntry.dir && !isSystemFile) {
                             const fileExt = filename.split('.').pop().toLowerCase();
-                            if (['js', 'jsx', 'ts', 'tsx', 'css', 'html', 'json'].includes(fileExt)) {
+                            if (['js', 'jsx', 'ts', 'tsx', 'css', 'html', 'json', 'py', 'php', 'sol', 'vy', 'vue'].includes(fileExt)) {
                                 const blob = await zipEntry.async('blob');
                                 const extractedFile = new File([blob], filename, { type: 'text/plain' });
 
@@ -82,7 +82,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                 }
             }
             // Regular files
-            else if (['js', 'jsx', 'ts', 'tsx', 'css', 'html', 'json'].includes(ext)) {
+            else if (['js', 'jsx', 'ts', 'tsx', 'css', 'html', 'json', 'py', 'php', 'sol', 'vy', 'vue'].includes(ext)) {
                 // Check for duplicates
                 const isDuplicate = uploadedFiles.some(
                     existing => existing.name === file.name && existing.size === file.size
@@ -167,7 +167,21 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
         let warningCount = 0;
         const lines = content.split('\n');
 
-        // HTML Validation (W3C Standard Simulation)
+        // Helper to find actual usage (excluding declarations and strings/comments)
+        const findActualUsage = (name) => {
+            const usagePattern = new RegExp(`\\b${name}\\b`, 'g');
+            const declarationPattern = new RegExp(`(const|let|var|function|class)\\s+${name}\\b`, 'g');
+
+            const totalMatches = (content.match(usagePattern) || []).length;
+            const declarationMatches = (content.match(declarationPattern) || []).length;
+
+            // This is still a heuristic, but better
+            return totalMatches - declarationMatches;
+        };
+
+        // 1. TECHNOLOGY-SPECIFIC ANALYSIS
+
+        // HTML Validation
         if (fileName.endsWith('.html')) {
             const htmlIssues = validateHtml(content, lines);
             issues.push(...htmlIssues.issues);
@@ -176,257 +190,305 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
             warningCount += htmlIssues.warningCount;
         }
 
-        // Check for common issues
-        if (content.includes('console.log')) {
-            issues.push({
-                type: 'warning',
-                line: findLineNumber(content, 'console.log'),
-                message: 'console.log() found - should be removed in production',
-                code: 'CONSOLE_LOG'
-            });
-            warningCount++;
-            suggestions.push({
-                type: 'optimization',
-                message: 'Remove console.log statements or use a proper logging library',
-                autoFix: true,
-                fixCode: 'Remove all console.log statements'
-            });
+        // Python Analysis
+        if (fileName.endsWith('.py')) {
+            // Check for print statements (Production best practice)
+            if (content.includes('print(')) {
+                issues.push({
+                    type: 'warning',
+                    line: findLineNumber(content, 'print('),
+                    message: 'Avoid using print() in production. Use a logging library instead.',
+                    code: 'PYTHON_LOGGING'
+                });
+                warningCount++;
+            }
+            // range(len()) anti-pattern
+            if (content.includes('range(len(')) {
+                suggestions.push({
+                    type: 'optimization',
+                    message: 'Use enumerate() instead of range(len()) for cleaner iteration.',
+                    autoFix: true,
+                    fixCode: 'for i, item in enumerate(my_list):',
+                    impact: 'medium'
+                });
+            }
+            if (content.includes('== None')) {
+                suggestions.push({
+                    type: 'optimization',
+                    message: 'Use "is None" instead of "== None" for comparing with None.',
+                    autoFix: true,
+                    fixCode: 'if value is None:',
+                    impact: 'low'
+                });
+            }
         }
 
-        if (content.includes('var ')) {
-            issues.push({
-                type: 'warning',
-                line: findLineNumber(content, 'var '),
-                message: 'Using "var" instead of "let" or "const"',
-                code: 'USE_VAR'
-            });
-            warningCount++;
-            suggestions.push({
-                type: 'modernization',
-                message: 'Replace "var" with "const" or "let" for better scoping',
-                autoFix: true,
-                fixCode: 'Replace var with const/let'
-            });
-        }
-
-        if (fileName.endsWith('.jsx') || fileName.endsWith('.tsx')) {
-            if (!content.includes('import React') && !content.includes('import { ')) {
+        // PHP Analysis
+        if (fileName.endsWith('.php')) {
+            if (content.includes('mysql_query')) {
+                issues.push({
+                    type: 'error',
+                    line: findLineNumber(content, 'mysql_query'),
+                    message: 'Deprecated mysql_query detected. Highly vulnerable to SQL injection.',
+                    code: 'PHP_SECURITY'
+                });
+                errorCount++;
+            }
+            if (content.includes('die(') || content.includes('exit(')) {
+                issues.push({
+                    type: 'warning',
+                    line: findLineNumber(content, 'die('),
+                    message: 'Using die() or exit() is not recommended in modern PHP applications. Use exceptions or proper error handling.',
+                    code: 'PHP_ERROR_HANDLING'
+                });
+                warningCount++;
+            }
+            if (!content.includes('<?php')) {
                 issues.push({
                     type: 'error',
                     line: 1,
-                    message: 'Missing React import',
-                    code: 'MISSING_IMPORT'
+                    message: 'Missing opening <?php tag.',
+                    code: 'PHP_STRUCTURE'
                 });
                 errorCount++;
-                suggestions.push({
-                    type: 'fix',
-                    message: 'Add missing React import',
-                    autoFix: true,
-                    fixCode: 'Add React import',
-                    impact: 'high'
-                });
             }
+        }
 
-            if (content.includes('class ') && content.includes('extends Component')) {
+        // Blockchain (Solidity) Analysis
+        if (fileName.endsWith('.sol')) {
+            if (!content.includes('pragma solidity')) {
+                issues.push({
+                    type: 'error',
+                    line: 1,
+                    message: 'Missing or invalid pragma solidity statement. Contract will not compile.',
+                    code: 'SOL_PRAGMA'
+                });
+                errorCount++;
+            }
+            // Missing visibility on functions
+            const funcRegex = /function\s+\w+\s*\([^)]*\)\s*(?!public|private|internal|external)/g;
+            if (funcRegex.test(content)) {
+                issues.push({
+                    type: 'error',
+                    line: findLineNumber(content, 'function'),
+                    message: 'Function visibility missing. Explicitly define as public, private, internal, or external.',
+                    code: 'SOL_VISIBILITY'
+                });
+                errorCount++;
+            }
+        }
+
+        // Vue.js Analysis
+        if (fileName.endsWith('.vue')) {
+            if (content.includes('v-for') && !content.includes(':key=')) {
+                issues.push({
+                    type: 'error',
+                    line: findLineNumber(content, 'v-for'),
+                    message: 'v-for directive missing required :key attribute.',
+                    code: 'VUE_KEY'
+                });
+                errorCount++;
+            }
+            if (content.includes('v-if') && content.includes('v-for')) {
                 suggestions.push({
-                    type: 'modernization',
-                    message: 'Consider converting class components to functional components with hooks',
+                    type: 'performance',
+                    message: 'v-if and v-for used on the same element. This is inefficient. Use a computed property to filter the list instead.',
                     autoFix: false,
                     impact: 'high'
                 });
             }
+        }
 
-            // Check for inline styles
-            if (content.includes('style={{')) {
+        // JS/TS Library Specific Checks
+        if (fileName.endsWith('.js') || fileName.endsWith('.jsx') || fileName.endsWith('.ts') || fileName.endsWith('.tsx')) {
+            // JQuery Detection
+            if (content.includes('$(') || content.includes('jQuery(')) {
                 suggestions.push({
-                    type: 'performance',
-                    message: 'Inline styles detected. Consider moving to CSS modules or styled-components',
-                    autoFix: true,
-                    fixCode: 'Extract inline styles to CSS',
+                    type: 'modernization',
+                    message: 'JQuery detected. Modern frameworks recommend native Web APIs or state-driven DOM updates.',
+                    autoFix: false,
                     impact: 'medium'
                 });
             }
 
-            // Check for missing key in maps
-            if (content.includes('.map(') && !content.includes('key=')) {
-                issues.push({
-                    type: 'warning',
-                    line: findLineNumber(content, '.map('),
-                    message: 'Missing "key" prop in list items',
-                    code: 'MISSING_KEY'
-                });
-                warningCount++;
+            // Three.js Detection
+            if (content.includes('THREE.') || content.includes('from "three"')) {
+                if (!content.includes('.dispose()')) {
+                    issues.push({
+                        type: 'warning',
+                        line: 1,
+                        message: 'Three.js: No .dispose() found. Potential memory leak in 3D scene.',
+                        code: 'THREE_MEMORY'
+                    });
+                    warningCount++;
+                }
             }
-        }
 
-        // Check for TODO comments
-        if (content.includes('TODO') || content.includes('FIXME')) {
-            issues.push({
-                type: 'info',
-                line: findLineNumber(content, 'TODO'),
-                message: 'TODO/FIXME comment found',
-                code: 'TODO_COMMENT'
-            });
-        }
-
-        // ENHANCED OPTIMIZATION CHECKS
-
-        // Check for long functions (more than 50 lines)
-        const functionBlocks = content.match(/function\s+\w+\s*\([^)]*\)\s*\{[\s\S]*?\n\}/g) || [];
-        const arrowFunctions = content.match(/const\s+\w+\s*=\s*\([^)]*\)\s*=>\s*\{[\s\S]*?\n\}/g) || [];
-        const allFunctions = [...functionBlocks, ...arrowFunctions];
-
-        allFunctions.forEach(func => {
-            const funcLines = func.split('\n').length;
-            if (funcLines > 50) {
-                suggestions.push({
-                    type: 'maintainability',
-                    message: `Long function detected (${funcLines} lines). Consider breaking into smaller functions for better readability`,
-                    autoFix: false,
-                    impact: 'high'
-                });
-            }
-        });
-
-        // Check for nested loops (performance issue)
-        const nestedLoopPattern = /for\s*\([^)]*\)[^{]*\{[^}]*for\s*\([^)]*\)/g;
-        if (nestedLoopPattern.test(content)) {
-            suggestions.push({
-                type: 'performance',
-                message: 'Nested loops detected. Consider optimizing with Map, Set, or single-pass algorithms',
-                autoFix: true,
-                fixCode: 'Add optimization comment for nested loops',
-                impact: 'high'
-            });
-        }
-
-        // Check for duplicate code blocks
-        const codeBlocks = lines.filter(line => line.trim().length > 20);
-        const duplicateLines = codeBlocks.filter((line, index) =>
-            codeBlocks.indexOf(line) !== index && line.trim() !== ''
-        );
-        if (duplicateLines.length > 5) {
-            suggestions.push({
-                type: 'maintainability',
-                message: 'Duplicate code detected. Consider extracting into reusable functions or components',
-                autoFix: false,
-                impact: 'medium'
-            });
-        }
-
-        // Check for magic numbers
-        const magicNumberPattern = /\b\d{2,}\b/g;
-        const magicNumbers = content.match(magicNumberPattern);
-        if (magicNumbers && magicNumbers.length > 5) {
-            suggestions.push({
-                type: 'readability',
-                message: 'Magic numbers found. Consider using named constants for better code clarity',
-                autoFix: true,
-                fixCode: 'Extract magic numbers to constants',
-                impact: 'medium'
-            });
-        }
-
-        // Check for deep nesting
-        const maxNestingLevel = Math.max(...lines.map(line => {
-            const match = line.match(/^(\s*)/);
-            return match ? Math.floor(match[1].length / 2) : 0;
-        }));
-        if (maxNestingLevel > 4) {
-            suggestions.push({
-                type: 'complexity',
-                message: 'Deep nesting detected (level ' + maxNestingLevel + '). Consider early returns or extracting functions',
-                autoFix: false,
-                impact: 'medium'
-            });
-        }
-
-        // Check for unused imports (simple check)
-        const imports = content.match(/import\s+{([^}]+)}\s+from/g) || [];
-        imports.forEach(imp => {
-            const imported = imp.match(/import\s+{([^}]+)}/)[1].split(',');
-            imported.forEach(item => {
-                const itemName = item.trim();
-                const usageCount = (content.match(new RegExp(itemName, 'g')) || []).length;
-                if (usageCount === 1) { // Only appears in import
+            // Next.js Detection
+            if (content.includes('next/router') || content.includes('next/link')) {
+                if (content.includes('<a ') && !content.includes('href="#') && !content.includes('target="_blank"')) {
                     suggestions.push({
                         type: 'optimization',
-                        message: `Unused import detected: ${itemName}. Remove to reduce bundle size`,
+                        message: 'Use Next.js <Link> component instead of <a> for client-side navigation.',
                         autoFix: true,
-                        fixCode: 'Remove unused imports',
+                        fixCode: '<Link href="...">...</Link>',
+                        impact: 'high'
+                    });
+                }
+            }
+        }
+
+        // React/JSX/TSX Specific
+        if (fileName.endsWith('.jsx') || fileName.endsWith('.tsx')) {
+            // Missing Dependency in useEffect
+            if (content.includes('useEffect') && content.includes('[') && content.includes(']')) {
+                const effectMatch = content.match(/useEffect\s*\(\s*\(\s*\)\s*=>\s*{([\s\S]*?)}\s*,\s*\[([^\]]*)\]\s*\)/);
+                if (effectMatch) {
+                    const body = effectMatch[1];
+                    const deps = effectMatch[2].split(',').map(d => d.trim()).filter(Boolean);
+
+                    // Simple check: see if variables used in body are in deps
+                    const usedVars = body.match(/\b([a-z]\w*)\b/g) || [];
+                    const missingDeps = usedVars.filter(v =>
+                        !deps.includes(v) &&
+                        content.includes(`const [${v}`) && // is a state
+                        !['null', 'undefined', 'true', 'false'].includes(v)
+                    );
+
+                    if (missingDeps.length > 0) {
+                        issues.push({
+                            type: 'warning',
+                            line: findLineNumber(content, 'useEffect'),
+                            message: `useEffect has missing dependencies: ${[...new Set(missingDeps)].join(', ')}`,
+                            code: 'REACT_HOOK_DEPS'
+                        });
+                        warningCount++;
+                    }
+                }
+            }
+
+            // Inline Style Objects
+            if (content.includes('style={{')) {
+                suggestions.push({
+                    type: 'performance',
+                    message: 'Inline style object detected. This causes re-renders on every update.',
+                    autoFix: true,
+                    fixCode: 'Extract styles to a constant outside the component',
+                    impact: 'medium'
+                });
+            }
+
+            // Missing React Import (legacy React)
+            if (content.includes('import React') === false && content.includes('JSX')) {
+                // Actually modern React doesn't need it, but some environments do
+            }
+        }
+
+        // JavaScript/TypeScript Logic
+
+        // Unused variables (Improved check)
+        const variableDecls = content.match(/(?:const|let|var)\s+([a-z]\w*)\s*=/gi) || [];
+        variableDecls.forEach(decl => {
+            const varName = decl.match(/(?:const|let|var)\s+([a-z]\w*)/i)[1];
+            if (!['props', 'state', 'index', 'item', 'key'].includes(varName)) {
+                const usage = findActualUsage(varName);
+                if (usage === 0) {
+                    issues.push({
+                        type: 'info',
+                        line: findLineNumber(content, decl),
+                        message: `Unused variable "${varName}" detected.`,
+                        code: 'UNUSED_VAR'
+                    });
+                    suggestions.push({
+                        type: 'optimization',
+                        message: `Remove unused variable: ${varName}`,
+                        autoFix: true,
+                        fixCode: `Delete declaration of ${varName}`,
                         impact: 'low'
                     });
                 }
-            });
+            }
         });
 
-        // Check for large file size
-        if (lines.length > 300) {
-            suggestions.push({
-                type: 'maintainability',
-                message: `Large file (${lines.length} lines). Consider splitting into smaller, focused modules`,
-                autoFix: false,
-                impact: 'medium'
-            });
-        }
+        // 2. GENERAL CLEAN CODE CHECKS
 
-        // Check for excessive complexity
-        const complexityIndicators = [
-            content.match(/if\s*\(/g)?.length || 0,
-            content.match(/else/g)?.length || 0,
-            content.match(/for\s*\(/g)?.length || 0,
-            content.match(/while\s*\(/g)?.length || 0,
-            content.match(/switch\s*\(/g)?.length || 0
-        ];
-        const totalComplexity = complexityIndicators.reduce((a, b) => a + b, 0);
-        if (totalComplexity > 20) {
-            suggestions.push({
-                type: 'complexity',
-                message: 'High cyclomatic complexity. Consider simplifying logic or using pattern matching',
-                autoFix: false,
-                impact: 'high'
+        // console.log
+        if (content.includes('console.log')) {
+            issues.push({
+                type: 'warning',
+                line: findLineNumber(content, 'console.log'),
+                message: 'Production code should not contain console.log()',
+                code: 'PRODUCTION_LOG'
             });
-        }
-
-        // Check for commented out code
-        const commentedCodeLines = lines.filter(line =>
-            line.trim().startsWith('//') &&
-            (line.includes('function') || line.includes('const') || line.includes('='))
-        ).length;
-        if (commentedCodeLines > 3) {
+            warningCount++;
             suggestions.push({
-                type: 'cleanliness',
-                message: 'Commented out code found. Remove dead code to keep codebase clean',
+                type: 'cleanup',
+                message: 'Remove all debug logs',
                 autoFix: true,
-                fixCode: 'Remove commented out code',
+                fixCode: 'Remove console.logs',
                 impact: 'low'
             });
         }
 
-        // Check for long parameter lists
-        const longParamPattern = /function\s+\w+\s*\(([^)]{50,})\)/g;
-        if (longParamPattern.test(content)) {
+        // Long Functions
+        const totalLines = lines.length;
+        if (totalLines > 300) {
             suggestions.push({
                 type: 'maintainability',
-                message: 'Long parameter list detected. Consider using object destructuring or parameter objects',
+                message: `File is too large (${totalLines} lines). Component should be refactored into smaller sub-modules.`,
+                autoFix: false,
+                impact: 'high'
+            });
+        }
+
+        // Deep Nesting (Improved)
+        let maxDepth = 0;
+        lines.forEach(line => {
+            const indent = line.match(/^\s*/)[0].length;
+            maxDepth = Math.max(maxDepth, Math.floor(indent / 2));
+        });
+        if (maxDepth > 5) {
+            suggestions.push({
+                type: 'complexity',
+                message: `Deep indentation level detected (${maxDepth}). Consider early exit patterns or extracting logic into helper functions.`,
                 autoFix: false,
                 impact: 'medium'
             });
         }
 
-        // Check for function length (simple check)
-        const functionMatches = content.match(/function\s+\w+|const\s+\w+\s*=\s*\(/g);
-        if (functionMatches && functionMatches.length > 10) {
+        // Magic Numbers
+        const magicNumbers = content.match(/\b(?!0|1|2|10|100|1000)\d{2,}\b/g) || [];
+        if (magicNumbers.length > 3) {
             suggestions.push({
-                type: 'maintainability',
-                message: 'Consider breaking down large functions into smaller ones',
-                autoFix: false,
+                type: 'readability',
+                message: 'Magic numbers detected. Use named constants for better intent expression.',
+                autoFix: true,
+                fixCode: 'const MAX_RETRY_COUNT = 5;',
                 impact: 'medium'
             });
         }
 
-        // Code quality score
-        const score = Math.max(0, 100 - (errorCount * 20 + warningCount * 5));
+        // Copy-Paste / Duplication
+        const uniqueLines = new Set();
+        let duplicates = 0;
+        lines.forEach(l => {
+            const t = l.trim();
+            if (t.length > 30) {
+                if (uniqueLines.has(t)) duplicates++;
+                else uniqueLines.add(t);
+            }
+        });
+        if (duplicates > 2) {
+            suggestions.push({
+                type: 'refactor',
+                message: 'Duplicate logic detected. Abstract repetitive code into shared utility functions.',
+                autoFix: false,
+                impact: 'high'
+            });
+        }
+
+        // Calculate Quality Score
+        const score = Math.max(0, 100 - (errorCount * 15 + warningCount * 5 + (issues.length - errorCount - warningCount) * 2));
 
         return {
             fileName,
@@ -434,11 +496,11 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
             lines: lines.length,
             size: content.length,
             issues,
-            suggestions,
+            suggestions: [...new Set(suggestions.map(s => JSON.stringify(s)))].map(s => JSON.parse(s)), // Deduplicate
             errorCount,
             warningCount,
-            qualityScore: score,
-            content: content.substring(0, 500) // Preview
+            qualityScore: Math.round(score),
+            content: content.substring(0, 1000)
         };
     };
 
@@ -607,7 +669,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                         type="file"
                         multiple
                         onChange={handleChange}
-                        accept=".js,.jsx,.ts,.tsx,.css,.html,.json,.zip"
+                        accept=".js,.jsx,.ts,.tsx,.css,.html,.json,.zip,.py,.php,.sol,.vy,.vue"
                         style={{ display: 'none' }}
                     />
 
@@ -621,16 +683,36 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                         </svg>
                     </div>
 
-                    <h3>Drag and Drop Your Code or ZIP File Here</h3>
-                    <p>Upload individual files or a ZIP containing your entire project. We'll automatically extract and analyze all code files!</p>
+                    <h3>Comprehensive Multi-Technology Analysis</h3>
+                    <p>Upload individual files or a ZIP project. We support Python, Blockchain (Solidity), PHP, React, Vue, Three.js, JQuery, and more!</p>
                     <div className="supported-formats mt-md">
-                        <span className="badge badge-info">.js</span>
-                        <span className="badge badge-info">.jsx</span>
-                        <span className="badge badge-info">.ts</span>
-                        <span className="badge badge-info">.tsx</span>
-                        <span className="badge badge-info">.css</span>
-                        <span className="badge badge-info">.html</span>
-                        <span className="badge badge-success">.zip</span>
+                        <div className="format-group">
+                            <span className="badge badge-info">.js</span>
+                            <span className="badge badge-info">.jsx</span>
+                            <span className="badge badge-info">.ts</span>
+                            <span className="badge badge-info">.tsx</span>
+                            <span className="badge badge-warning">Next.js</span>
+                            <span className="badge badge-warning">React</span>
+                        </div>
+                        <div className="format-group mt-sm">
+                            <span className="badge badge-success">.py</span>
+                            <span className="badge badge-success">Python</span>
+                            <span className="badge badge-info">.php</span>
+                            <span className="badge badge-info">PHP</span>
+                            <span className="badge badge-error">.sol</span>
+                            <span className="badge badge-error">Blockchain</span>
+                        </div>
+                        <div className="format-group mt-sm">
+                            <span className="badge badge-warning">.vue</span>
+                            <span className="badge badge-warning">Vue.js</span>
+                            <span className="badge badge-info">Three.js</span>
+                            <span className="badge badge-info">JQuery</span>
+                        </div>
+                        <div className="format-group mt-sm">
+                            <span className="badge badge-info">.css</span>
+                            <span className="badge badge-info">.html</span>
+                            <span className="badge badge-success">.zip</span>
+                        </div>
                     </div>
 
                     <button className="btn btn-primary mt-md" onClick={onButtonClick}>
@@ -665,7 +747,14 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                         {uploadedFiles.map((file, index) => (
                             <div key={index} className="file-item">
                                 <div className="file-info">
-                                    <div className="file-icon">📄</div>
+                                    <div className="file-icon">
+                                        {file.name.endsWith('.py') ? '🐍' :
+                                            file.name.endsWith('.php') ? '🐘' :
+                                                file.name.endsWith('.sol') ? '⛓️' :
+                                                    file.name.endsWith('.vue') ? '🖖' :
+                                                        file.name.endsWith('.css') ? '🎨' :
+                                                            file.name.endsWith('.html') ? '🌐' : '📄'}
+                                    </div>
                                     <div className="file-item-details">
                                         <div className="file-name">{file.name}</div>
                                         <div className="file-size">{(file.size / 1024).toFixed(2)} KB</div>
