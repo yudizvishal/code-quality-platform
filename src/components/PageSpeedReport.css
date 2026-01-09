@@ -362,6 +362,7 @@
     gap: 12px;
     transition: all 0.3s;
     font-size: 1rem;
+    white-space: nowrap;
 }
 
 .btn-download-pdf-full:hover {
@@ -383,50 +384,72 @@
     gap: 8px;
     font-size: 0.85rem;
     transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .btn-download-pdf-sm:hover {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Print Styles */
+/* Print Styles - Refined for PDF visibility */
 @media print {
-    body * {
-        visibility: hidden;
-    }
-
-    #printable-report,
-    #printable-report * {
-        visibility: visible;
-        color: black !important;
-    }
-
-    #printable-report {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
+    body {
+        margin: 0;
+        padding: 0;
         background: white !important;
-        border: none !important;
-        box-shadow: none !important;
-        max-height: none !important;
-        height: auto !important;
-        overflow: visible !important;
-        display: block !important;
+    }
+
+    /* Hide everything except the modal */
+    body>*:not(#root),
+    #root>*:not(.app),
+    .app>*:not(.app-content-wrapper),
+    .app-content-wrapper>*:not(.container),
+    .container>*:not(.analysis-results),
+    .analysis-results>*:not(.speed-modal-overlay) {
+        display: none !important;
     }
 
     .speed-modal-overlay {
-        background: white !important;
-        padding: 0;
         position: static !important;
+        background: white !important;
+        padding: 0 !important;
         display: block !important;
         overflow: visible !important;
+        visibility: visible !important;
+    }
+
+    .speed-modal {
+        position: static !important;
+        width: 100% !important;
+        max-width: none !important;
+        max-height: none !important;
+        height: auto !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+        overflow: visible !important;
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    .speed-content {
+        padding: 20px !important;
+        overflow: visible !important;
+        display: block !important;
     }
 
     .speed-header,
-    .speed-footer,
-    .header-actions {
-        border-bottom: 2px solid #ddd;
+    .speed-footer {
+        background: #f8f8f8 !important;
+        border-bottom: 2px solid #333 !important;
+        color: black !important;
+    }
+
+    .speed-header h3,
+    .speed-header .gt-badge {
+        color: black !important;
     }
 
     .close-btn,
@@ -438,46 +461,97 @@
 
     .tab-pane {
         display: block !important;
-        /* Show ALL tabs in print */
-        margin-bottom: 40px;
+        opacity: 1 !important;
+        visibility: visible !important;
+        margin-bottom: 50px !important;
         page-break-inside: avoid;
     }
 
     .section-title-print {
         display: block !important;
-        /* Show titles in print */
-        color: #333 !important;
+        color: #000 !important;
+        font-size: 1.4rem !important;
+        margin-top: 30px !important;
+        border-bottom: 1px solid #ccc !important;
+        padding-bottom: 10px !important;
     }
 
-    .suggestion-detail-card,
+    .score-card,
     .metric-item,
-    .score-card {
+    .suggestion-detail-card,
+    .issue-row {
         background: white !important;
-        border: 1px solid #eee !important;
-        page-break-inside: avoid;
-        margin-bottom: 20px;
+        border: 1px solid #ddd !important;
+        color: black !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 20px !important;
+    }
+
+    .score-value,
+    .metric-value,
+    .suggestion-info-main h5 {
+        color: black !important;
     }
 
     .suggestion-code-block {
-        background: #f8f8f8 !important;
-        border: 1px solid #ddd !important;
-        color: #333 !important;
+        background: #f4f4f4 !important;
+        border: 1px solid #ccc !important;
     }
 
-    .suggestion-code-block code {
-        color: #333 !important;
+    /* Force visibility of text */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
-    h3,
-    h4,
-    h5,
-    p,
-    span,
-    div,
-    strong {
+    .gt-badge {
+        background: #333 !important;
+        color: white !important;
+        padding: 4px 8px !important;
+        border-radius: 4px !important;
+    }
+
+    .score-gauge svg {
+        filter: none !important;
+    }
+
+    .score-gauge .bg {
+        stroke: #eee !important;
+    }
+
+    .score-gauge .progress {
+        stroke: var(--score-color) !important;
+    }
+
+    .score-value {
         color: black !important;
+        font-size: 3rem !important;
+    }
+
+    .issue-impact-tag {
+        border: 1px solid #ccc !important;
+        padding: 2px 6px !important;
+        font-size: 0.7rem !important;
+        text-transform: uppercase !important;
+        font-weight: bold !important;
+    }
+
+    .impact-high {
+        color: #dc2626 !important;
+        border-color: #dc2626 !important;
+    }
+
+    .impact-medium {
+        color: #d97706 !important;
+        border-color: #d97706 !important;
+    }
+
+    .impact-low {
+        color: #059669 !important;
+        border-color: #059669 !important;
     }
 }
+
 
 @media (max-width: 768px) {
 
