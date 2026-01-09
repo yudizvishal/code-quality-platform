@@ -78,7 +78,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
                     }
                 } catch (error) {
                     console.error('Error extracting ZIP:', error);
-                    alert('આ ZIP file extract કરવામાં error આવી. કૃપા કરીને valid ZIP file upload કરો.');
+                    alert('Error extracting ZIP file. Please upload a valid ZIP file.');
                 }
             }
             // Regular files
@@ -98,7 +98,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
 
         // Show alert if duplicates found
         if (duplicates.length > 0) {
-            alert(`આ files પહેલાથી upload છે, skip કરી:\n${duplicates.join('\n')}`);
+            alert(`These files are already uploaded and will be skipped:\n${duplicates.join('\n')}`);
         }
 
         setUploadedFiles(prev => [...prev, ...allFiles]);
@@ -652,7 +652,7 @@ const FileUploader = ({ onFilesAnalyzed, onAnalysisStart, isAnalyzing }) => {
             {isExtracting && (
                 <div className="extracting-notice glass-card animate-fade-in">
                     <div className="loader-small"></div>
-                    <p>ZIP file extract કરી રહ્યા છીએ... કૃપા કરીને રાહ જુઓ</p>
+                    <p>Extracting ZIP file... Please wait</p>
                 </div>
             )}
 

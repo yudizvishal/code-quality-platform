@@ -682,19 +682,22 @@
     }
 }
 
-/* Print Styles */
+/* Print & PDF Export Optimization */
 @media print {
     body {
         background: white !important;
-        color: black !important;
+        color: #0f172a !important;
     }
 
+    /* Hide UI noise */
     .app-header,
     .header-actions,
     .summary-actions,
-    .analysis-results h3 svg,
     .remove-btn,
-    .close-btn {
+    .close-btn,
+    .file-actions-grid,
+    .recommendation-item .btn,
+    .speed-modal-overlay>*:not(.speed-modal) {
         display: none !important;
     }
 
@@ -703,84 +706,98 @@
         background: white !important;
     }
 
-    .glass-card,
-    .file-analysis-card,
-    .stat-card,
-    .recommendation-item {
+    /* Overall Summary Stats - PDF Layout */
+    .summary-card {
         background: white !important;
-        color: black !important;
-        border: 1px solid #ddd !important;
+        border: 2px solid #4F46E5 !important;
+        margin-bottom: 40px !important;
+        box-shadow: none !important;
+    }
+
+    .summary-header h2 {
+        background: none !important;
+        -webkit-text-fill-color: #0f172a !important;
+        color: #0f172a !important;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 10px;
+    }
+
+    .summary-stats {
+        grid-template-columns: repeat(3, 1fr) !important;
+        background: white !important;
+    }
+
+    .stat-card {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #0f172a !important;
+        page-break-inside: avoid;
+    }
+
+    .stat-value {
+        color: #0f172a !important;
+    }
+
+    .stat-label {
+        color: #64748b !important;
+    }
+
+    /* File List - PDF Layout */
+    .file-analysis-card {
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
         box-shadow: none !important;
         margin-bottom: 20px !important;
         page-break-inside: avoid;
     }
 
-    /* Force details to show in print */
     .file-details {
         display: block !important;
-        height: auto !important;
         opacity: 1 !important;
-        padding: 15px !important;
-        border-top: 1px solid #eee !important;
-    }
-
-    .issues-list,
-    .suggestions-list {
-        display: block !important;
-    }
-
-    .subsection-title {
-        color: #333 !important;
-    }
-
-    .expand-icon {
-        display: none !important;
-    }
-
-    .file-actions-grid {
-        display: none !important;
-    }
-
-    .stat-value {
-        color: black !important;
-    }
-
-    .stat-label {
-        color: #666 !important;
+        background: white !important;
+        border-top: 1px solid #f1f5f9 !important;
+        padding-top: 20px !important;
     }
 
     .quality-badge {
-        background: #eee !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border: 1.5px solid #cbd5e1 !important;
+        box-shadow: none !important;
     }
 
-    h2,
-    h3,
-    h4 {
-        color: black !important;
+    .issue-item,
+    .suggestion-item {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: avoid;
     }
 
-    p {
-        color: #444 !important;
-    }
-
-    .badge {
-        border: 1px solid #ccc !important;
+    .recommendation-item {
         background: white !important;
-        color: black !important;
+        border: 1px solid #e2e8f0 !important;
+        break-inside: avoid;
     }
 
-    /* Keep color intent but ensure printable */
+    .rec-content h4 {
+        color: #0f172a !important;
+    }
+
+    /* Maintain color intent */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
     .quality-success {
-        border-left: 5px solid green !important;
+        border-left: 6px solid #10b981 !important;
     }
 
     .quality-warning {
-        border-left: 5px solid orange !important;
+        border-left: 6px solid #f59e0b !important;
     }
 
     .quality-error {
-        border-left: 5px solid red !important;
+        border-left: 6px solid #ef4444 !important;
     }
 }

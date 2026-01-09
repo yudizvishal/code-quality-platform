@@ -62,18 +62,31 @@ const W3CValidation = ({ validationResult, onClose }) => {
                     </div>
 
                     <div className="w3c-stats-grid">
-                        <div className="w3c-stat">
-                            <div className="w3c-stat-icon error-icon">❌</div>
+                        <div className="w3c-stat w3c-stat-error">
+                            <div className="w3c-stat-icon error-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
                             <div className="w3c-stat-value">{validationResult.summary.errorCount}</div>
                             <div className="w3c-stat-label">Errors</div>
                         </div>
-                        <div className="w3c-stat">
-                            <div className="w3c-stat-icon warning-icon">⚠️</div>
+                        <div className="w3c-stat w3c-stat-warning">
+                            <div className="w3c-stat-icon warning-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 9V11M12 15H12.01M5.07183 19H18.9282C20.4678 19 21.4301 17.3333 20.6603 16L13.7321 4C12.9623 2.66667 11.0378 2.66667 10.268 4L3.33978 16C2.56998 17.3333 3.53223 19 5.07183 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
                             <div className="w3c-stat-value">{validationResult.summary.warningCount}</div>
                             <div className="w3c-stat-label">Warnings</div>
                         </div>
-                        <div className="w3c-stat">
-                            <div className="w3c-stat-icon suggestion-icon">💡</div>
+                        <div className="w3c-stat w3c-stat-suggestion">
+                            <div className="w3c-stat-icon suggestion-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9.663 17H14.337M12 3C16.4183 3 20 6.58172 20 11C20 13.3302 19.0019 15.427 17.4063 16.8924C17.1517 17.1262 17 17.458 17 17.8066V18C17 19.1046 16.1046 20 15 20H9C7.89543 20 7 19.1046 7 18V17.8066C7 17.458 6.84827 17.1262 6.59372 16.8924C4.99814 15.427 4 13.3302 4 11C4 6.58172 7.58172 3 12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
                             <div className="w3c-stat-value">{validationResult.summary.suggestionCount}</div>
                             <div className="w3c-stat-label">Suggestions</div>
                         </div>
@@ -89,7 +102,12 @@ const W3CValidation = ({ validationResult, onClose }) => {
                                 className="w3c-section-title error-title"
                                 onClick={() => toggleSection('errors')}
                             >
-                                <span className="section-icon">❌</span>
+                                <span className="section-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </span>
                                 Errors ({validationResult.errors.length})
                                 <span className={`expand-icon ${expandedSections.errors ? 'expanded' : ''}`}>▼</span>
                             </h3>
@@ -128,7 +146,11 @@ const W3CValidation = ({ validationResult, onClose }) => {
                                 className="w3c-section-title warning-title"
                                 onClick={() => toggleSection('warnings')}
                             >
-                                <span className="section-icon">⚠️</span>
+                                <span className="section-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 9V11M12 15H12.01M5.07183 19H18.9282C20.4678 19 21.4301 17.3333 20.6603 16L13.7321 4C12.9623 2.66667 11.0378 2.66667 10.268 4L3.33978 16C2.56998 17.3333 3.53223 19 5.07183 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </span>
                                 Warnings ({validationResult.warnings.length})
                                 <span className={`expand-icon ${expandedSections.warnings ? 'expanded' : ''}`}>▼</span>
                             </h3>
@@ -167,7 +189,11 @@ const W3CValidation = ({ validationResult, onClose }) => {
                                 className="w3c-section-title suggestion-title"
                                 onClick={() => toggleSection('suggestions')}
                             >
-                                <span className="section-icon">💡</span>
+                                <span className="section-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9.663 17H14.337M12 3C16.4183 3 20 6.58172 20 11C20 13.3302 19.0019 15.427 17.4063 16.8924C17.1517 17.1262 17 17.458 17 17.8066V18C17 19.1046 16.1046 20 15 20H9C7.89543 20 7 19.1046 7 18V17.8066C7 17.458 6.84827 17.1262 6.59372 16.8924C4.99814 15.427 4 13.3302 4 11C4 6.58172 7.58172 3 12 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </span>
                                 Best Practice Suggestions ({validationResult.suggestions.length})
                                 <span className={`expand-icon ${expandedSections.suggestions ? 'expanded' : ''}`}>▼</span>
                             </h3>

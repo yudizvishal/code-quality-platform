@@ -3,35 +3,51 @@ import { useState, useEffect } from 'react';
 import { analyzePerformance } from '../utils/performanceAnalyzer';
 import './PageSpeedReport.css';
 
-const PageSpeedReport = ({ file, onClose }) => {
+const PageSpeedReport = ({ files, onClose }) => {
     const [report, setReport] = useState(null);
     const [activeTab, setActiveTab] = useState('summary');
     const [analyzing, setAnalyzing] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const results = analyzePerformance(file.content, file.fileName);
-            // Add custom detailed suggestions with code snippets
-            results.detailedSuggestions = getDetailedSuggestions(results.issues, file.content);
-            setReport(results);
+            const allFileResults = files.map(file => {
+                const results = analyzePerformance(file.content, file.fileName);
+                results.detailedSuggestions = getDetailedSuggestions(results.issues, file.content);
+                return {
+                    fileName: file.fileName,
+                    ...results
+                };
+            });
+
+            // Calculate aggregate data
+            const totalDesktop = allFileResults.reduce((acc, curr) => acc + curr.desktopScore, 0);
+            const totalMobile = allFileResults.reduce((acc, curr) => acc + curr.mobileScore, 0);
+            const count = allFileResults.length;
+
+            const aggregateReport = {
+                isProjectAudit: count > 1,
+                desktopScore: Math.round(totalDesktop / count),
+                mobileScore: Math.round(totalMobile / count),
+                fileResults: allFileResults,
+                // Average markers for metrics
+                metrics: {
+                    lcp: (allFileResults.reduce((acc, curr) => acc + parseFloat(curr.metrics.lcp), 0) / count).toFixed(2) + 's',
+                    tbt: Math.round(allFileResults.reduce((acc, curr) => acc + parseFloat(curr.metrics.tbt), 0) / count) + 'ms',
+                    cls: (allFileResults.reduce((acc, curr) => acc + parseFloat(curr.metrics.cls), 0) / count).toFixed(3),
+                    speedIndex: (allFileResults.reduce((acc, curr) => acc + parseFloat(curr.metrics.speedIndex), 0) / count).toFixed(2) + 's'
+                },
+                totalIssues: allFileResults.reduce((acc, curr) => acc + curr.issues.length, 0)
+            };
+
+            setReport(aggregateReport);
             setAnalyzing(false);
         }, 1500);
 
         return () => clearTimeout(timer);
-    }, [file]);
+    }, [files]);
 
     const getDetailedSuggestions = (issues, content) => {
         const suggestions = [];
-
-        // Always add a core performance suggestion if score is low
-        if (report?.desktopScore < 90) {
-            suggestions.push({
-                title: "Optimize Critical Rendering Path",
-                description: "Your page has elements blocking the first paint. Priority should be given to visible content.",
-                autoFix: "Add <link rel='preload'> for critical font and CSS files.",
-                code: "<link rel='preload' href='main.css' as='style'>"
-            });
-        }
 
         issues.forEach(issue => {
             if (issue.title.includes('render-blocking')) {
@@ -72,7 +88,7 @@ const PageSpeedReport = ({ file, onClose }) => {
             }
         });
 
-        // Default suggestion if list is empty
+        // Always add a core performance suggestion if score is low
         if (suggestions.length === 0) {
             suggestions.push({
                 title: "Enable Text Compression",
@@ -92,24 +108,20 @@ const PageSpeedReport = ({ file, onClose }) => {
     };
 
     const handlePrint = () => {
-        // Trigger print for the whole window but CSS will handle making only modal visible
         window.print();
     };
 
-    if (!report && analyzing) {
+    if (analyzing) {
         return (
             <div className="speed-modal-overlay">
-                <div className="speed-modal" style={{ height: 'auto', padding: '60px', alignItems: 'center' }}>
-                    <div className="loading-spinner" style={{
-                        width: '50px',
-                        height: '50px',
-                        border: '4px solid rgba(79, 70, 229, 0.1)',
-                        borderTopColor: '#4F46E5',
-                        borderRadius: '50%',
-                        animation: 'spin 1s linear infinite'
-                    }}></div>
-                    <h3 style={{ marginTop: '24px', color: 'white', fontFamily: 'JetBrains Mono' }}>Analyzing Performance...</h3>
-                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>Generating Detailed Recommendations</p>
+                <div className="speed-modal" style={{ height: 'auto', padding: '60px', alignItems: 'center', background: '#0f172a' }}>
+                    <div className="loading-spinner"></div>
+                    <h3 style={{ marginTop: '24px', color: 'white', fontFamily: 'JetBrains Mono' }}>
+                        {files.length > 1 ? 'Auditing Project Performance...' : 'Analyzing File Performance...'}
+                    </h3>
+                    <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>
+                        {files.length > 1 ? `Checking ${files.length} files` : 'Generating Detailed Recommendations'}
+                    </p>
                 </div>
             </div>
         );
@@ -122,8 +134,8 @@ const PageSpeedReport = ({ file, onClose }) => {
             <div className="speed-modal" id="printable-report" onClick={e => e.stopPropagation()}>
                 <div className="speed-header">
                     <h3>
-                        <span className="gt-badge">SPEED REPORT</span>
-                        Performance Analysis: {file.fileName}
+                        <span className="gt-badge">{report.isProjectAudit ? 'PROJECT AUDIT' : 'SPEED REPORT'}</span>
+                        {report.isProjectAudit ? 'Performance Audit' : 'Performance Analysis'}
                     </h3>
                     <div className="header-actions">
                         <button className="btn-download-pdf-sm" onClick={handlePrint} title="Download Full PDF">
@@ -147,84 +159,84 @@ const PageSpeedReport = ({ file, onClose }) => {
                             Executive Summary
                         </button>
                         <button
-                            className={`tab-btn ${activeTab === 'issues' ? 'active' : ''}`}
-                            onClick={() => setActiveTab('issues')}
+                            className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('details')}
                         >
-                            All Performance Issues ({report.issues.length})
+                            {report.isProjectAudit ? 'File-wise Improvements' : 'Detailed Analysis'}
                         </button>
                     </div>
 
-                    <div className={`tab-pane ${activeTab === 'summary' ? 'active' : ''}`} id="summary-section">
+                    <div className={`tab-pane ${activeTab === 'summary' ? 'active' : ''}`}>
                         <div className="scores-container">
                             <ScoreCircle
-                                label="Desktop Performance"
+                                label={report.isProjectAudit ? "Avg Desktop Score" : "Desktop Performance"}
                                 score={report.desktopScore}
                                 color={getScoreColor(report.desktopScore)}
                             />
                             <ScoreCircle
-                                label="Mobile Performance"
+                                label={report.isProjectAudit ? "Avg Mobile Score" : "Mobile Performance"}
                                 score={report.mobileScore}
                                 color={getScoreColor(report.mobileScore)}
                             />
                         </div>
 
                         <div className="metrics-section">
-                            <h4 className="metrics-section-title">Key Web Vitals</h4>
+                            <h4 className="metrics-section-title">Aggregate Web Vitals</h4>
                             <div className="metrics-grid">
-                                <MetricCard label="LCP" value={report.metrics.lcp} status={report.metrics.lcp.replace('s', '') < 2.5 ? 'good' : 'ok'} />
-                                <MetricCard label="TBT" value={report.metrics.tbt} status={report.metrics.tbt.replace('ms', '') < 200 ? 'good' : 'ok'} />
-                                <MetricCard label="CLS" value={report.metrics.cls} status={report.metrics.cls < 0.1 ? 'good' : 'ok'} />
-                                <MetricCard label="Speed Index" value={report.metrics.speedIndex} status={report.metrics.speedIndex.replace('s', '') < 3.0 ? 'good' : 'ok'} />
+                                <MetricCard label="LCP" value={report.metrics.lcp} status={parseFloat(report.metrics.lcp) < 2.5 ? 'good' : 'ok'} />
+                                <MetricCard label="TBT" value={report.metrics.tbt} status={parseInt(report.metrics.tbt) < 200 ? 'good' : 'ok'} />
+                                <MetricCard label="CLS" value={report.metrics.cls} status={parseFloat(report.metrics.cls) < 0.1 ? 'good' : 'ok'} />
+                                <MetricCard label="Speed Index" value={report.metrics.speedIndex} status={parseFloat(report.metrics.speedIndex) < 3.0 ? 'good' : 'ok'} />
                             </div>
                         </div>
 
-                        <div className="improvement-suggestions-detailed">
-                            <div className="suggestions-header">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                                </svg>
-                                Improvement Result Suggestion & Auto Actions
+                        {report.isProjectAudit && (
+                            <div className="project-audit-notice">
+                                <p>This project audit covers <strong>{files.length}</strong> technology-specific files. Switch to the <strong>File-wise Improvements</strong> tab for specific optimizations for each file.</p>
                             </div>
-                            <div className="detailed-suggestions-list">
-                                {report.detailedSuggestions.map((s, i) => (
-                                    <div key={i} className="suggestion-detail-card">
-                                        <div className="suggestion-info-main">
-                                            <div className="suggestion-badge-new">RECOMMENDED</div>
-                                            <h5>{s.title}</h5>
-                                            <p>{s.description}</p>
-                                            <div className="auto-fix-instruction">
-                                                <strong>Auto Suggestion:</strong> {s.autoFix}
-                                            </div>
-                                        </div>
-                                        {s.code && (
-                                            <div className="suggestion-code-block">
-                                                <pre><code>{s.code}</code></pre>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        )}
                     </div>
 
-                    <div className={`tab-pane ${activeTab === 'issues' ? 'active' : ''}`} id="issues-section">
-                        <div className="speed-issues">
-                            <h4 className="section-title-print" style={{ display: 'none' }}>Detailed Audit Issues</h4>
-                            {report.issues.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '60px', color: 'rgba(255,255,255,0.4)' }}>
-                                    <p>No significant performance issues found!</p>
-                                </div>
-                            ) : (
-                                report.issues.map((issue, idx) => (
-                                    <div key={idx} className="issue-row">
-                                        <div className={`issue-impact-tag impact-${issue.impact}`}>{issue.impact}</div>
-                                        <div className="issue-info">
-                                            <h5>{issue.title}</h5>
-                                            <p>{issue.description}</p>
+                    <div className={`tab-pane ${activeTab === 'details' ? 'active' : ''}`}>
+                        <div className="detailed-improvements-container">
+                            {report.fileResults.map((fileResult, fIdx) => (
+                                <div key={fIdx} className="file-improvement-group">
+                                    <div className="file-improvement-header">
+                                        <div className="file-name-pill">
+                                            <span className="dot"></span>
+                                            {fileResult.fileName}
+                                        </div>
+                                        <div className="file-mini-scores">
+                                            <span style={{ color: getScoreColor(fileResult.desktopScore) }}>D: {fileResult.desktopScore}</span>
+                                            <span style={{ color: getScoreColor(fileResult.mobileScore) }}>M: {fileResult.mobileScore}</span>
                                         </div>
                                     </div>
-                                ))
-                            )}
+
+                                    <div className="detailed-suggestions-list">
+                                        {fileResult.detailedSuggestions.length === 0 ? (
+                                            <div className="no-issues-mini">No performance issues found! ✨</div>
+                                        ) : (
+                                            fileResult.detailedSuggestions.map((s, i) => (
+                                                <div key={i} className="suggestion-detail-card">
+                                                    <div className="suggestion-info-main">
+                                                        <div className="suggestion-badge-new">RECOMMENDED</div>
+                                                        <h5>{s.title}</h5>
+                                                        <p>{s.description}</p>
+                                                        <div className="auto-fix-instruction">
+                                                            <strong>Auto Suggestion:</strong> {s.autoFix}
+                                                        </div>
+                                                    </div>
+                                                    {s.code && (
+                                                        <div className="suggestion-code-block">
+                                                            <pre><code>{s.code}</code></pre>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>

@@ -16,15 +16,15 @@
 }
 
 .speed-modal {
-    background: var(--bg-surface);
-    border: 1px solid var(--glass-border);
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     width: 100%;
     max-width: 1000px;
     max-height: 92vh;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     position: relative;
 }
@@ -61,7 +61,7 @@
     border-radius: 6px;
     font-size: 0.7rem;
     font-weight: 800;
-    letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
 .close-btn {
@@ -204,10 +204,10 @@
 }
 
 .metric-item {
-    background: var(--bg-surface-soft);
+    background: rgba(255, 255, 255, 0.03);
     padding: 24px;
     border-radius: 16px;
-    border-left: 3px solid var(--glass-border);
+    border-left: 3px solid rgba(255, 255, 255, 0.1);
 }
 
 .metric-item.good {
@@ -238,29 +238,6 @@
 }
 
 /* Improvement Suggestions Detailed */
-.improvement-suggestions-detailed {
-    background: rgba(79, 70, 229, 0.03);
-    border: 1px solid rgba(79, 70, 229, 0.1);
-    border-radius: 24px;
-    padding: 32px;
-}
-
-.suggestions-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 32px;
-    color: #818CF8;
-    font-weight: 800;
-    font-size: 1.2rem;
-}
-
-.detailed-suggestions-list {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
 .suggestion-detail-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -304,15 +281,11 @@
 }
 
 .suggestion-code-block {
-    background: var(--bg-dark);
+    background: #020617;
     padding: 16px;
     border-radius: 10px;
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     overflow-x: auto;
-}
-
-.suggestion-code-block pre {
-    margin: 0;
 }
 
 .suggestion-code-block code {
@@ -321,27 +294,66 @@
     color: #A5B4FC;
 }
 
-/* Tabs logic */
-.tab-pane {
-    display: none;
+/* Audit Elements */
+.project-audit-notice {
+    background: rgba(79, 70, 229, 0.15);
+    border: 1px solid rgba(79, 70, 229, 0.3);
+    border-radius: 12px;
+    padding: 24px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 32px;
 }
 
-.tab-pane.active {
+.detailed-improvements-container {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 48px;
 }
 
-.section-title-print {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.2rem;
-    font-weight: 700;
+.file-improvement-group {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 40px;
+}
+
+.file-improvement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 24px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
 }
 
-/* Footer / Buttons */
+.file-name-pill {
+    background: rgba(79, 70, 229, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-name-pill .dot {
+    width: 10px;
+    height: 10px;
+    background: #4F46E5;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #4F46E5;
+}
+
+.file-mini-scores {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+/* Footer & Buttons */
 .speed-footer {
     padding: 32px 40px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -383,99 +395,206 @@
     gap: 8px;
     font-size: 0.85rem;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
-.btn-download-pdf-sm:hover {
-    background: rgba(255, 255, 255, 0.1);
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(79, 70, 229, 0.1);
+    border-top-color: #4F46E5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
-/* Print Styles */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Print & PDF Export Optimization - THE KEY FIX */
 @media print {
-    body * {
-        visibility: hidden;
-    }
-
-    #printable-report,
-    #printable-report * {
-        visibility: visible;
-        color: black !important;
-    }
-
-    #printable-report {
-        position: absolute !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 100% !important;
+    body {
+        margin: 0;
+        padding: 0;
         background: white !important;
-        border: none !important;
-        box-shadow: none !important;
-        max-height: none !important;
-        height: auto !important;
-        overflow: visible !important;
-        display: block !important;
+    }
+
+    /* Hide everything else */
+    body>*:not(.speed-modal-overlay) {
+        display: none !important;
     }
 
     .speed-modal-overlay {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
         background: white !important;
-        padding: 0;
-        position: static !important;
+        padding: 0 !important;
         display: block !important;
         overflow: visible !important;
+        z-index: 9999 !important;
     }
 
-    .speed-header,
+    .speed-modal {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        border: none !important;
+        background: white !important;
+        box-shadow: none !important;
+        display: block !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .speed-header {
+        border-bottom: 3px solid #4F46E5 !important;
+        padding: 30px 40px !important;
+        background: white !important;
+    }
+
+    .speed-header h3,
+    .speed-header .gt-badge {
+        color: #0f172a !important;
+    }
+
+    .header-actions,
     .speed-footer,
-    .header-actions {
-        border-bottom: 2px solid #ddd;
-    }
-
     .close-btn,
-    .btn-download-pdf-sm,
-    .btn-download-pdf-full,
     .tabs {
         display: none !important;
     }
 
+    .speed-content {
+        padding: 40px !important;
+        overflow: visible !important;
+        display: block !important;
+        background: white !important;
+    }
+
+    /* Force show all tab panes sequentially in PDF */
     .tab-pane {
         display: block !important;
-        /* Show ALL tabs in print */
-        margin-bottom: 40px;
-        page-break-inside: avoid;
-    }
-
-    .section-title-print {
-        display: block !important;
-        /* Show titles in print */
-        color: #333 !important;
-    }
-
-    .suggestion-detail-card,
-    .metric-item,
-    .score-card {
+        opacity: 1 !important;
+        visibility: visible !important;
+        page-break-after: always;
+        margin-bottom: 50px !important;
         background: white !important;
-        border: 1px solid #eee !important;
-        page-break-inside: avoid;
-        margin-bottom: 20px;
+    }
+
+    .tab-pane:last-child {
+        page-break-after: auto;
+    }
+
+    /* PDF Headers for Sections */
+    .tab-pane::before {
+        display: block;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #4F46E5;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tab-pane:nth-child(1)::before {
+        content: "I. Executive Summary";
+    }
+
+    .tab-pane:nth-child(2)::before {
+        content: "II. Detailed File Analysis";
+    }
+
+    /* PDF Score Cards */
+    .score-card {
+        background: #f8fafc !important;
+        border: 2px solid #e2e8f0 !important;
+        margin-bottom: 30px !important;
+        break-inside: avoid;
+    }
+
+    .score-card h4 {
+        color: #64748b !important;
+    }
+
+    .score-value {
+        color: #0f172a !important;
+    }
+
+    /* PDF Metrics Grid */
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+        margin-bottom: 40px !important;
+    }
+
+    .metric-item {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        break-inside: avoid;
+    }
+
+    .metric-label {
+        color: #64748b !important;
+    }
+
+    .metric-value {
+        color: #0f172a !important;
+    }
+
+    /* PDF Improvement Cards */
+    .suggestion-detail-card {
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
+        break-inside: avoid;
+        margin-bottom: 20px !important;
+        box-shadow: none !important;
+    }
+
+    .suggestion-info-main h5 {
+        color: #0f172a !important;
+    }
+
+    .suggestion-info-main p {
+        color: #334155 !important;
     }
 
     .suggestion-code-block {
-        background: #f8f8f8 !important;
-        border: 1px solid #ddd !important;
-        color: #333 !important;
+        background: #0f172a !important;
+        border: 1px solid #1e293b !important;
     }
 
     .suggestion-code-block code {
-        color: #333 !important;
+        color: #e2e8f0 !important;
     }
 
-    h3,
-    h4,
-    h5,
-    p,
-    span,
-    div,
-    strong {
-        color: black !important;
+    .auto-fix-instruction {
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border-left: 4px solid #4F46E5 !important;
+    }
+
+    .file-name-pill {
+        background: #eff6ff !important;
+        border: 1px solid #bfdbfe !important;
+        color: #1e40af !important;
+    }
+
+    .file-name-pill .dot {
+        background: #3b82f6 !important;
+    }
+
+    /* Colors printing */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
 
