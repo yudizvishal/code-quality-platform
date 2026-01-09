@@ -12,6 +12,7 @@ const AnalysisResults = ({ data, onReset }) => {
     const [improvingFile, setImprovingFile] = useState(null);
     const [w3cValidationResult, setW3cValidationResult] = useState(null);
     const [speedReportFiles, setSpeedReportFiles] = useState(null);
+    const [activeTab, setActiveTab] = useState('errors');
     const [deepAnalysisFile, setDeepAnalysisFile] = useState(null);
     const [expandedSections, setExpandedSections] = useState({
         errors: true,
@@ -197,22 +198,43 @@ const AnalysisResults = ({ data, onReset }) => {
 
                             {selectedFile === index && (
                                 <div className="file-details">
-                                    {/* Issues */}
-                                    {file.issues.length > 0 && (
-                                        <div className="issues-section">
-                                            <h4
-                                                className="subsection-title"
-                                                onClick={() => toggleSection('errors')}
-                                            >
-                                                Issues Found ({file.issues.length})
-                                                <span className={`expand-icon ${expandedSections.errors ? 'expanded' : ''}`}>▼</span>
-                                            </h4>
-                                            {expandedSections.errors && (
-                                                <div className="issues-list">
-                                                    {file.issues.map((issue, idx) => (
+                                    {/* Tabbed Filter Interface */}
+                                    <div className="filter-tabs">
+                                        <button
+                                            className={`filter-card ${activeTab === 'errors' ? 'active' : ''}`}
+                                            onClick={() => setActiveTab('errors')}
+                                        >
+                                            <span className="filter-icon">❌</span>
+                                            <span className="filter-count">{file.issues.filter(i => i.type === 'error').length}</span>
+                                            <span className="filter-label">Errors</span>
+                                        </button>
+                                        <button
+                                            className={`filter-card ${activeTab === 'warnings' ? 'active' : ''}`}
+                                            onClick={() => setActiveTab('warnings')}
+                                        >
+                                            <span className="filter-icon">⚠️</span>
+                                            <span className="filter-count">{file.issues.filter(i => i.type === 'warning').length}</span>
+                                            <span className="filter-label">Warnings</span>
+                                        </button>
+                                        <button
+                                            className={`filter-card ${activeTab === 'suggestions' ? 'active' : ''}`}
+                                            onClick={() => setActiveTab('suggestions')}
+                                        >
+                                            <span className="filter-icon">💡</span>
+                                            <span className="filter-count">{file.suggestions.length}</span>
+                                            <span className="filter-label">Suggestions</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Errors & Warnings List */}
+                                    {(activeTab === 'errors' || activeTab === 'warnings') && (
+                                        <div className="issues-section animate-fade-in">
+                                            <div className="issues-list">
+                                                {file.issues.filter(i => i.type === activeTab.slice(0, -1)).length > 0 ? (
+                                                    file.issues.filter(i => i.type === activeTab.slice(0, -1)).map((issue, idx) => (
                                                         <div key={idx} className={`issue-item issue-${issue.type}`}>
                                                             <div className="issue-header">
-                                                                <span className={`badge badge-${issue.type === 'error' ? 'error' : issue.type === 'warning' ? 'warning' : 'info'}`}>
+                                                                <span className={`badge badge-${issue.type === 'error' ? 'error' : 'warning'}`}>
                                                                     {issue.type.toUpperCase()}
                                                                 </span>
                                                                 <span className="issue-line">Line {issue.line}</span>
@@ -220,25 +242,22 @@ const AnalysisResults = ({ data, onReset }) => {
                                                             <div className="issue-message">{issue.message}</div>
                                                             <div className="issue-code">{issue.code}</div>
                                                         </div>
-                                                    ))}
-                                                </div>
-                                            )}
+                                                    ))
+                                                ) : (
+                                                    <div className="no-issues-mini">
+                                                        <p>No {activeTab} found for this file. ✨</p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
 
-                                    {/* Suggestions */}
-                                    {file.suggestions.length > 0 && (
-                                        <div className="suggestions-section">
-                                            <h4
-                                                className="subsection-title"
-                                                onClick={() => toggleSection('suggestions')}
-                                            >
-                                                Optimization Suggestions ({file.suggestions.length})
-                                                <span className={`expand-icon ${expandedSections.suggestions ? 'expanded' : ''}`}>▼</span>
-                                            </h4>
-                                            {expandedSections.suggestions && (
-                                                <div className="suggestions-list">
-                                                    {file.suggestions.map((suggestion, idx) => (
+                                    {/* Suggestions List */}
+                                    {activeTab === 'suggestions' && (
+                                        <div className="suggestions-section animate-fade-in">
+                                            <div className="suggestions-list">
+                                                {file.suggestions.length > 0 ? (
+                                                    file.suggestions.map((suggestion, idx) => (
                                                         <div key={idx} className="suggestion-item">
                                                             <div className="suggestion-header">
                                                                 <span className="badge badge-info">{suggestion.type}</span>
@@ -251,7 +270,7 @@ const AnalysisResults = ({ data, onReset }) => {
                                                                                 strokeLinecap="round"
                                                                                 strokeLinejoin="round" />
                                                                         </svg>
-                                                                        Auto-Fix Available
+                                                                        Auto-Fix
                                                                     </span>
                                                                 )}
                                                             </div>
@@ -267,9 +286,13 @@ const AnalysisResults = ({ data, onReset }) => {
                                                                 </div>
                                                             )}
                                                         </div>
-                                                    ))}
-                                                </div>
-                                            )}
+                                                    ))
+                                                ) : (
+                                                    <div className="no-issues-mini">
+                                                        <p>No suggestions found for this file. 🚀</p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
 

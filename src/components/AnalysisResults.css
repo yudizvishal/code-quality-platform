@@ -314,32 +314,85 @@
     animation: fadeIn 0.3s ease-out;
 }
 
-.subsection-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-md);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    padding: var(--spacing-md);
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
+/* Filter Tabs for Issues/Suggestions */
+.filter-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+.filter-card {
+    background: var(--bg-surface-soft);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-md);
-    transition: all var(--transition);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl) var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--text-secondary);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Hover effect removed for static display */
+.filter-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+}
 
-.expand-icon {
-    transition: transform var(--transition);
+.filter-card.active {
+    background: rgba(167, 139, 250, 0.1);
+    border-color: var(--neon-purple);
+    color: var(--text-primary);
+    box-shadow: 0 10px 30px rgba(167, 139, 250, 0.2);
+}
+
+.filter-icon {
+    font-size: 3rem;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.filter-card:hover .filter-icon {
+    transform: scale(1.1);
+}
+
+.filter-count {
+    font-size: 2.25rem;
+    font-weight: 900;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.filter-card.active .filter-count {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.filter-label {
     font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.expand-icon.expanded {
-    transform: rotate(180deg);
+.no-issues-mini {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+}
+
+/* Subsection overrides */
+.subsection-title {
+    display: none;
 }
 
 /* Issues */
